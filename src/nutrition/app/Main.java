@@ -26,11 +26,15 @@ import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static java.util.stream.Collectors.joining;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -125,60 +129,26 @@ public class Main {
         }
         
         private void init(Container contentPane) {
-            contentPane.setLayout(new GridBagLayout());
+            //contentPane.setLayout(new BorderLayout());
             GridBagConstraints gbc = new GridBagConstraints();
             JTextArea textArea = new JTextArea();
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setPreferredSize(new Dimension(800,600));
             
             gbc.gridx = 1;
             gbc.gridy = 1;
             
-            contentPane.add(textArea, gbc);
-            String test = "1%20large%20apple";
+            contentPane.add(scrollPane, BorderLayout.CENTER);
+            String test = "1 large apple";
             try {
-                JSONObject obj = getNutritionFacts(test);
-                textArea.append(obj.toString());
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-
-            
-        }
-        
-        private JSONObject getNutritionFacts(String requestedFood) throws Exception {
-            String url = encodeURL(requestedFood);
-            System.out.println("\nSending 'GET' request to URL : " + url);
-            try (
-                Reader reader = new InputStreamReader(
-                    Runtime.getRuntime().exec("curl " + '"'+url+'"').getInputStream()
-                )
-                    ) {
-                return new JSONObject(reader);
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-            
-
-            
-            return null;
-            
-        }
-        
-        private String encodeURL(String ingredient){
-            String apiURL = Constants.BASE_URL;
-            String appID = Constants.APP_ID;
-            String app_key = Constants.APP_KEY;
+                String result = FoodService.getNutritionFacts(test);
                 
-            String enc = apiURL + "app_id=${"+appID + "}&app_key=${" +app_key + "}&ingr=" + ingredient;  
-            System.out.println(enc);
-            return enc;
-            
+                
+                textArea.setText(result);
+            } catch(IOException e) {
+            }
         }
         
-        private String encodeValue(String value) {
-            try {
-                return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-            } catch(UnsupportedEncodingException e) {}
-            return null;
-        }
+
     }
 }
