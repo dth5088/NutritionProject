@@ -137,4 +137,54 @@ public class FoodService {
         }
     }
     
+    public static String parseFood(String food) throws IOException{
+        String urlString, contentAsString, jsonResult;
+        
+        HttpURLConnection conn = null;
+        InputStream is = null;
+        URL url;
+        int response;
+        
+        try {
+            
+            
+            String stringURL = buildParserUrl(food);
+            url = new URL(stringURL);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-Type","application/json; charset=UTF-8");
+            
+            response = conn.getResponseCode();
+            
+            if(response != HttpURLConnection.HTTP_OK) {
+                return "Server returned: " + response + " aborting read.";
+            }
+            is = conn.getInputStream();
+            
+            contentAsString = readIt(is);
+            return contentAsString;    
+        }
+        finally {
+            if(is != null)
+                try {
+                    is.close();
+                } catch(IOException ignore) {}
+            if(conn != null)
+                try {
+                    conn.disconnect();
+                } catch(IllegalStateException ignore) {}
+                
+        }
+    }
+    private static String buildParserUrl(String food) throws UnsupportedEncodingException {
+       String APP_KEY = String.join("=",Constants.KEY_QUERY_PARAMETER, Constants.APP_KEY);
+       String APP_ID = String.join("=", Constants.APP_QUERY_PARAMETER, Constants.APP_ID);
+       String INGREDIENT = String.join("=", Constants.INGREDIENT_PARAMETER, jsonEncode(food));
+       String ret = Constants.PARSER_BASE_URL + "?" + INGREDIENT + "&" + APP_ID + "&" + APP_KEY + "&page=0";
+       return ret;
+    }
+    private static String jsonEncode(String in) throws UnsupportedEncodingException {
+        return URLEncoder.encode(in, "UTF-8").replace("+","%20");
+    }
+    
 }

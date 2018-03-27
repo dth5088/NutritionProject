@@ -140,11 +140,13 @@ public class Main {
             
             contentPane.add(scrollPane, BorderLayout.CENTER);
             String test = "1 large apple";
+            String test2 = "red apple";
             try {
-                String result = FoodService.getNutritionFacts(test);
+                //String result = FoodService.getNutritionFacts(test);
+                String result2 = FoodService.parseFood(test2);
                 
                 
-                textArea.setText(result);
+                textArea.setText(result2);
             } catch(IOException e) {
             }
         }
