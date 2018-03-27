@@ -12,7 +12,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -145,21 +147,26 @@ public class Main {
         private JSONObject getNutritionFacts(String requestedFood) throws Exception {
             String url = encodeURL(requestedFood);
             System.out.println("\nSending 'GET' request to URL : " + url);
-            HttpURLConnection httpCon = (HttpURLConnection) ((new URL(url).openConnection()));
-            httpCon.setRequestProperty("Conetent-Type","application/json");
-            httpCon.setDoOutput(true);
-            httpCon.setRequestMethod("GET");
+            try (
+                Reader reader = new InputStreamReader(
+                    Runtime.getRuntime().exec("curl " + '"'+url+'"').getInputStream()
+                )
+                    ) {
+                return new JSONObject(reader);
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
             
 
             
-            return new JSONObject();
+            return null;
             
         }
         
         private String encodeURL(String ingredient){
-            String apiURL = "https://api.edamam.com/api/nutrition-data?";
-            String appID = "003195be";
-            String app_key = "9545905b112d501f51a0b2169292158f";
+            String apiURL = Constants.BASE_URL;
+            String appID = Constants.APP_ID;
+            String app_key = Constants.APP_KEY;
                 
             String enc = apiURL + "app_id=${"+appID + "}&app_key=${" +app_key + "}&ingr=" + ingredient;  
             System.out.println(enc);
