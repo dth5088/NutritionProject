@@ -149,6 +149,7 @@ public class FoodService {
             
             
             String stringURL = buildParserUrl(food);
+            System.out.println(stringURL);
             url = new URL(stringURL);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -180,7 +181,7 @@ public class FoodService {
        String APP_KEY = String.join("=",Constants.KEY_QUERY_PARAMETER, Constants.APP_KEY);
        String APP_ID = String.join("=", Constants.APP_QUERY_PARAMETER, Constants.APP_ID);
        String INGREDIENT = String.join("=", Constants.INGREDIENT_PARAMETER, jsonEncode(food));
-       String ret = Constants.PARSER_BASE_URL + "?" + INGREDIENT + "&" + APP_ID + "&" + APP_KEY + "&page=0";
+       String ret = Constants.PARSER_BASE_URL + "?" + INGREDIENT + "&" + APP_ID + "&" + APP_KEY;
        return ret;
     }
     private static String jsonEncode(String in) throws UnsupportedEncodingException {
