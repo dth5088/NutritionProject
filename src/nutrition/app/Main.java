@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.Month;
@@ -16,6 +17,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -30,6 +33,7 @@ import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.json.JSONException;
 
 
 /**
@@ -58,56 +62,11 @@ public class Main {
          MainFrame mainFrame = new MainFrame();
     }
     
-    private static User makeDustin() {
-        double myWeightInLbs = 180;
-        double myHeightInInches = 72;
-        double myWeightInKg = myWeightInLbs * lbs_to_kg;
-        double myHeightInCm = myHeightInInches * inch_to_cm;
-        LocalDate dob = LocalDate.of(1992, Month.JUNE, 20);
-        Gender gender = Gender.MALE;
-        ActivityLevel activityLevel = ActivityLevel.SEDENTARY;
-        Goal fitnessGoal = Goal.FAT_LOSS;
-        
-        return new User("Dustin","Huntoon",myHeightInCm,myWeightInKg,dob,gender,activityLevel,fitnessGoal);
-    }
-    
-    private static User makeStefanie() {
-        double weight = 155 * lbs_to_kg;
-        double height = 63 * inch_to_cm;
-        LocalDate dob = LocalDate.of(1991,Month.SEPTEMBER, 9);
-        Gender gender = Gender.FEMALE;
-        ActivityLevel activityLevel = ActivityLevel.SEDENTARY;
-        Goal fitnessGoal = Goal.FAT_LOSS;
-        return new User("Stefanie","Huntoon",height,weight,dob,gender,activityLevel,fitnessGoal);
-    }
-    
-    /**
-     * Method to create Ryan.
-     * 
-     * @param firstName             -> YOUR FIRST NAME
-     * @param lastName              -> YOUR LAST NAME
-     * @param yourHeightInInches    -> YOUR HEIGHT IN INCHES
-     * @param yourWeightInLbs       -> YOUR WEIGHT IN POUNDS
-     * @param dateOfBirth           -> STRING REPRESENTATION OF YOUR BIRTHDAY (MONTH/DAY/YEAR) EX. "6/20/1992"
-     * @param activityLevel         -> CAN BE activityLevel.SEDENTARY, activityLevel.LIGHT, activityLevel.MODERATE, OR activityLevel.HEAVY
-     * @param fitnessGoal           -> CAN BE Goal.FAT_LOSS, Goal.MAINTAIN, OR Goal.GAIN_MASS
-     * @return 
-     */
-    private static User makeRyan(String firstName, String lastName, double yourHeightInInches, double yourWeightInLbs, String dateOfBirth, ActivityLevel activityLevel, Goal fitnessGoal)
-    {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");    // Create format for String date(Month/Day/Year) -> LocalDate conversion   
-        double heightInCm = yourHeightInInches * inch_to_cm;                        //convert your height in inches to centimeters
-        double weightInKg = yourWeightInLbs * lbs_to_kg;                            // convert your weight in lbs to kg
-        LocalDate dob = LocalDate.parse(dateOfBirth, formatter);                    // convert String date to LocalDate date using MM/dd/yyyy format
-        Gender gender = Gender.MALE;
-        
-        return new User(firstName,lastName, heightInCm, weightInKg, dob, gender, activityLevel, fitnessGoal);
-    }
     
     private static class MainFrame extends JFrame {
         JTextArea textArea = new JTextArea(), foodResponseTextArea = new JTextArea();
-        JTextField textField;
-        JButton executeButton;
+        JTextField textField = new JTextField();
+        JButton executeButton = new JButton("Lookup Food");
         Dimension panelSize = new Dimension(300,700);
         Dimension userPanelSize = new Dimension(600, 700);
         final DefaultComboBoxModel<String> activityLevelComboBoxModel = new DefaultComboBoxModel<>(new String[] {"Sedentary","Light","Moderate","Heavy"});
@@ -180,11 +139,13 @@ public class Main {
                 String firstName = firstNameField.getText();
                 String lastName = lastNameField.getText();
                 String weightString = weightTextField.getText();
-                double weight = Double.parseDouble(weightString);
+                double weightLBS = Double.parseDouble(weightString);
+                double weight = weightLBS * lbs_to_kg;
                 String ht_ft = heightFeetComboBox.getSelectedItem().toString().replace("'", "");
                 String ht_in = heightInchesComboBox.getSelectedItem().toString().replace('"', ' ').trim();
-                String heightString = ht_ft + "." + ht_in;
-                double heightInches = Double.parseDouble(heightString);
+                
+                double heightInches = (Double.parseDouble(ht_ft) * 12.0) + (Double.parseDouble(ht_in));
+                double heightCm = heightInches * inch_to_cm;
                 LocalDate dateOfBirth = LocalDate.parse(dob, formatter);
                 String genderString = genderComboBox.getSelectedItem().toString();
                 String goalString = goalComboBox.getSelectedItem().toString();
@@ -234,12 +195,27 @@ public class Main {
                 
                 if(goal != null && activityLevel != null && gender != null)
                 {
-                    user = new User(firstName,lastName,heightInches,weight,dateOfBirth,gender,activityLevel,goal);
+                    user = new User(firstName,lastName,heightCm,weight,dateOfBirth,gender,activityLevel,goal);
                     textArea.setText("");
                     textArea.append(user.toString());
                     System.out.println(user.toString());
                 }
                 
+            });
+            
+            executeButton.addActionListener(e -> {
+                String foodToSearch = textField.getText();
+                String jsonString = "";
+                try {
+                    String returnString = FoodService.getNutritionFacts(foodToSearch);
+                    Parser parser = new Parser(returnString);
+                    jsonString = parser.getMacros();
+                    
+                    
+                } catch (IOException | JSONException ex) {
+                    jsonString = ex.getMessage();
+                }
+                foodResponseTextArea.setText(jsonString);
             });
         }
         
@@ -344,10 +320,8 @@ public class Main {
             JPanel foodPanel = new JPanel();
             foodPanel.setPreferredSize(panelSize);
             foodPanel.setMinimumSize(panelSize);
-            textField = new JTextField();
             textField.setToolTipText("Example: one large apple");
             textField.setText("textField");
-            executeButton = new JButton("Lookup Food");
             JScrollPane scrollPane = new JScrollPane(foodResponseTextArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             
             GroupLayout layout = new GroupLayout(foodPanel);
@@ -482,6 +456,7 @@ public class Main {
             );
             return userPanel;
         }
+        
 
     }
 }
