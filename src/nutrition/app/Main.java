@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.time.LocalDate;
@@ -12,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -37,6 +40,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellRenderer;
 import nutrition.app.Parsers.FoodList;
 import nutrition.app.Parsers.FoodParser;
+import nutrition.app.Parsers.ReportParser;
 import nutrition.app.Parsers.USDAFood;
 import org.json.JSONException;
 
@@ -233,17 +237,33 @@ public class Main {
                     for(USDAFood food : searchResults.getFoodList())
                     {
                         model.addRow(food);
-                        setOptionsForReport(food.getNDBNO(),"b");
-                        textArea.append(FoodService.getNutrientsFromNDBno(options));
                     }
                     
                 } catch (IOException | JSONException ex) {
                     jsonString = ex.getMessage();
                 }
-                
-                
-
-                
+            });
+            
+            table.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    int row = table.getSelectedRow();
+                    USDAFood food = model.getRow(row);
+                    setOptionsForReport(food.getNDBNO(), "b");
+                    try {
+                        String reportString = FoodService.getNutrientsFromNDBno(options);
+                        ReportParser foodParser = new ReportParser(reportString);
+                        
+                        textArea.setText("Nutrients for: "+food.getFoodName()+"\n");
+                        textArea.append(foodParser.toString());
+                        textArea.setCaretPosition(0);
+                        
+                    } catch(IOException | JSONException ignore) {
+                        
+                    }
+                    
+                    
+                }
             });
         }
         
@@ -402,7 +422,6 @@ public class Main {
             textAreaPanel.setLayout(new BorderLayout());
             textArea.setSize(foodResponseTextArea.getSize());
             JScrollPane scrollPane = new JScrollPane(textArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            textArea.setText("Text Area Panel");
             textAreaPanel.add(scrollPane);
             return textAreaPanel;
         }

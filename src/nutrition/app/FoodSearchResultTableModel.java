@@ -32,6 +32,10 @@ public class FoodSearchResultTableModel extends AbstractTableModel{
         rows.add(food);
         fireTableRowsInserted(rows.size()-1, rows.size()-1);
     }
+    
+    public USDAFood getRow(int row) {
+        return rows.get(row);
+    }
     /**
      * Overrides AbstractTableModel isCellEditable for
      * column 3 and for (buttonColumns).
