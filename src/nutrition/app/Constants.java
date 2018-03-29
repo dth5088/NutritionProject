@@ -21,8 +21,26 @@ public class Constants {
     public static final String KEY_QUERY_PARAMETER = "app_key";
     public static final String APP_QUERY_PARAMETER = "app_id";
     
-    public static String USDA_API_KEY = "b9KNuZaS5aw9SP8nXcS94XoPwEeGPHrMkzGJUN7H";
+    
+    public static String USDA_API_KEY = "api_key";
+    public static String USDA_API_KEYVALUE = "b9KNuZaS5aw9SP8nXcS94XoPwEeGPHrMkzGJUN7H";
     public static String USDA_SEARCH_FOOD_URL = "https://api.nal.usda.gov/ndb/search/";
+    public static String USDA_REPORT_URL = "https://api.nal.usda.gov/ndb/reports/";
+    
+    public static String USDA_FORMAT_KEY = "format";
+    public static String USDA_SEARCH_TERM_KEY = "q";
+    public static String USDA_DATA_SOURCE_KEY = "ds";
+    public static String USDA_FOOD_GROUP_KEY = "fg";
+    public static String USDA_SORT_OPTION_KEY = "sort";
+    public static String USDA_SORT_FOODNAME = "n";
+    public static String USDA_SORT_RELEVANCE = "r";
+    public static String USDA_MAX_KEY = "max";
+    public static String USDA_OFFSET_KEY = "offset";
+    public static String USDA_FORMAT_VALUE = "json";
+    public static String USDA_DBNO_KEY = "ndbno";
+    public static String USDA_TYPE_KEY = "type";
+    public static String USDA_LISTTYPE_KEY = "lt";              // can be d = derivation codes, f = food , n = all nutrients, ns = speciality nutrients, nr = standard release nutrients only,g = food group
+    
     
     
     

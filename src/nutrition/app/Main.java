@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -87,9 +88,11 @@ public class Main {
         JScrollPane tablePane;
         FoodSearchResultTableModel model = new FoodSearchResultTableModel();
         JTable table;
+        HashMap<String,String> options;
         
         
         public MainFrame() {
+            options = new HashMap<>();
             createAndShowGUI();
             
             
@@ -217,8 +220,9 @@ public class Main {
                     //String returnString = FoodService.getNutritionFacts(foodToSearch);
                     //Parser parser = new Parser(returnString);
                     //jsonString = parser.getMacros();
-                    
-                    String returnString = FoodService.getFoodListMatching(foodToSearch);
+                    setOptions(foodToSearch);
+                    //String returnString = FoodService.getFoodListMatching(foodToSearch);
+                    String returnString = FoodService.fetchUSDA_FoodList(options);
                     FoodParser parser = new FoodParser(foodToSearch, returnString);
                     searchResults = new FoodList(parser.getSearchResults());
                     jsonString = returnString;
@@ -229,6 +233,8 @@ public class Main {
                     for(USDAFood food : searchResults.getFoodList())
                     {
                         model.addRow(food);
+                        setOptionsForReport(food.getNDBNO(),"b");
+                        textArea.append(FoodService.getNutrientsFromNDBno(options));
                     }
                     
                 } catch (IOException | JSONException ex) {
@@ -363,7 +369,6 @@ public class Main {
             foodPanel.setMinimumSize(panelSize);
             textField.setToolTipText("Enter food to search!");
             
-            //JScrollPane scrollPane = new JScrollPane(foodResponseTextArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             tablePane = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             
             GroupLayout layout = new GroupLayout(foodPanel);
@@ -497,6 +502,24 @@ public class Main {
                     .addComponent(submitUserButton)
             );
             return userPanel;
+        }
+
+        private void setOptions(String searchTerm) {
+            options = new HashMap<>();
+            options.put(Constants.USDA_FORMAT_KEY, Constants.USDA_FORMAT_VALUE);
+            options.put(Constants.USDA_SEARCH_TERM_KEY, searchTerm);
+            options.put(Constants.USDA_SORT_OPTION_KEY, Constants.USDA_SORT_FOODNAME);
+            options.put(Constants.USDA_MAX_KEY, "10");
+            options.put(Constants.USDA_OFFSET_KEY, "0");
+            options.put(Constants.USDA_API_KEY, Constants.USDA_API_KEYVALUE);
+        }
+        
+        private void setOptionsForReport(String dbnoKey, String reportType) {
+            options = new HashMap<>();
+            options.put(Constants.USDA_DBNO_KEY, dbnoKey);
+            options.put(Constants.USDA_TYPE_KEY, reportType);
+            options.put(Constants.USDA_FORMAT_KEY, Constants.USDA_FORMAT_VALUE);
+            options.put(Constants.USDA_API_KEY, Constants.USDA_API_KEYVALUE);
         }
         
 
