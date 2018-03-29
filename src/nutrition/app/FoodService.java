@@ -137,6 +137,40 @@ public class FoodService {
         }
     }
     
+    public static String getFoodListMatching(String food) throws IOException{
+        HttpURLConnection conn = null;
+        InputStream is = null;
+        URL url;
+        int response;
+        String contentAsString;
+        try {
+            String stringURL  = Constants.USDA_SEARCH_FOOD_URL + "?format=json&q="+food+"&sort=n&max=25&offset=0&api_key="+Constants.USDA_API_KEY; 
+            url = new URL(stringURL);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-Type","application/json; charset=UTF-8");
+            
+            response = conn.getResponseCode();
+            
+            if(response != HttpURLConnection.HTTP_OK) {
+                return "Server returned: " + response + " aborting read.";
+            }
+            is = conn.getInputStream();
+            
+            contentAsString = readIt(is);
+            return contentAsString;    
+        } finally {
+            if(is != null)
+                try {
+                    is.close();
+                } catch(IOException ignore) {}
+            if(conn != null)
+                try {
+                    conn.disconnect();
+                } catch(IllegalStateException ignore) {}
+        }
+    }
+    
     public static String parseFood(String food) throws IOException{
         String urlString, contentAsString, jsonResult;
         

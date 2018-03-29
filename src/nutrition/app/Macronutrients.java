@@ -54,7 +54,6 @@ public class Macronutrients {
     
     @Override
     public String toString() {
-        //String str = String.format("%10s %.2f %10s %.2f %10s %.2f %10s %.2f\n", "Carbohydrates:",carbohydrate, "Protein:",protein,"Fat:",fat,"Calories:",calories);
         String str = "\n*******************************************************\n";
         str += String.format("*%s %.2f\n", " Total Calories:",calories);
         str += String.format("*%s%.2f%s %6s%.2f%s %6s%.2f%s\n"," Carbohydrates:",carbohydrate,"g","Protein:",protein,"g","Fat:",fat,"g");

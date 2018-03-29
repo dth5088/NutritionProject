@@ -1,6 +1,8 @@
 package nutrition.app;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.io.IOException;
@@ -10,19 +12,31 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.TableCellRenderer;
+import nutrition.app.Parsers.FoodList;
+import nutrition.app.Parsers.FoodParser;
+import nutrition.app.Parsers.USDAFood;
 import org.json.JSONException;
 
 
@@ -69,8 +83,10 @@ public class Main {
         JComboBox<String> dayComboBox = new JComboBox();
         User user;
         JButton submitUserButton = new JButton("Create User");
-        
-        
+        String[] columnNames = {"Food Name", "NDB Number"};
+        JScrollPane tablePane;
+        FoodSearchResultTableModel model = new FoodSearchResultTableModel();
+        JTable table;
         
         
         public MainFrame() {
@@ -196,16 +212,32 @@ public class Main {
             executeButton.addActionListener(e -> {
                 String foodToSearch = textField.getText();
                 String jsonString = "";
+                FoodList searchResults = new FoodList(foodToSearch);
                 try {
-                    String returnString = FoodService.getNutritionFacts(foodToSearch);
-                    Parser parser = new Parser(returnString);
-                    jsonString = parser.getMacros();
+                    //String returnString = FoodService.getNutritionFacts(foodToSearch);
+                    //Parser parser = new Parser(returnString);
+                    //jsonString = parser.getMacros();
                     
+                    String returnString = FoodService.getFoodListMatching(foodToSearch);
+                    FoodParser parser = new FoodParser(foodToSearch, returnString);
+                    searchResults = new FoodList(parser.getSearchResults());
+                    jsonString = returnString;
+                    tablePane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                                                                            "Search Results for: " + foodToSearch,
+                                                                            TitledBorder.CENTER,
+                                                                            TitledBorder.TOP));
+                    for(USDAFood food : searchResults.getFoodList())
+                    {
+                        model.addRow(food);
+                    }
                     
                 } catch (IOException | JSONException ex) {
                     jsonString = ex.getMessage();
                 }
-                foodResponseTextArea.setText(jsonString);
+                
+                
+
+                
             });
         }
         
@@ -248,7 +280,7 @@ public class Main {
             heightInchesComboBox = new JComboBox<>(getHeightInchesModel());
             yearComboBox.setSize(new Dimension());
             
-            
+            setupResultTable();
             setActionListeners();
             setLayout(contentPane);
         }
@@ -260,7 +292,6 @@ public class Main {
             return str;
         }
         
-
         
         private DefaultComboBoxModel<String> getHeightFeetModel() {
             String[] arr = new String[8];
@@ -306,13 +337,34 @@ public class Main {
             
         }
         
+        private void setupResultTable() {
+            table = new JTable(model) {
+                @Override
+                public Component prepareRenderer(
+                TableCellRenderer renderer, int row, int column) {
+                    Component c = super.prepareRenderer(renderer, row, column);
+                    if(column < 4)
+                    {
+                        ((JLabel)c).setHorizontalAlignment(SwingConstants.CENTER);
+                    }
+                    if(!isRowSelected(row)) {
+                        String type = (String) getModel().getValueAt(row, 0);
+                        c.setBackground( row % 2 == 0 ? null : Color.LIGHT_GRAY);
+                        ((JComponent)c).setBorder(new LineBorder(Color.LIGHT_GRAY));
+                    }
+                    setRowHeight(row, 30);
+                    return c;
+                }
+            };
+        }
         private JPanel createFoodPanel() {
             JPanel foodPanel = new JPanel();
             foodPanel.setPreferredSize(panelSize);
             foodPanel.setMinimumSize(panelSize);
-            textField.setToolTipText("Example: one large apple");
-            textField.setText("textField");
-            JScrollPane scrollPane = new JScrollPane(foodResponseTextArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            textField.setToolTipText("Enter food to search!");
+            
+            //JScrollPane scrollPane = new JScrollPane(foodResponseTextArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            tablePane = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             
             GroupLayout layout = new GroupLayout(foodPanel);
             foodPanel.setLayout(layout);
@@ -326,7 +378,7 @@ public class Main {
                                     .addComponent(textField)
                                     .addComponent(executeButton)
                             )
-                            .addComponent(scrollPane)));
+                            .addComponent(tablePane)));
                     
                     
             
@@ -334,7 +386,7 @@ public class Main {
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(textField)
                     .addComponent(executeButton))
-                .addComponent(scrollPane));
+                .addComponent(tablePane));
             return foodPanel;
         }
         

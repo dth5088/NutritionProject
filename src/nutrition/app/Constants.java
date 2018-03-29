@@ -22,6 +22,8 @@ public class Constants {
     public static final String APP_QUERY_PARAMETER = "app_id";
     
     public static String USDA_API_KEY = "b9KNuZaS5aw9SP8nXcS94XoPwEeGPHrMkzGJUN7H";
+    public static String USDA_SEARCH_FOOD_URL = "https://api.nal.usda.gov/ndb/search/";
+    
     
     
 }
