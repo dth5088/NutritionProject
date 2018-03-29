@@ -189,7 +189,7 @@ public class FoodService {
     }
     
     private static String jsonEncode(String in) throws UnsupportedEncodingException {
-        return URLEncoder.encode(in, "UTF-8").replace("+","%20");
+        return URLEncoder.encode(in, "UTF-8");
     }
     
 }

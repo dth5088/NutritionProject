@@ -8,6 +8,8 @@ import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -76,7 +78,7 @@ public class Main {
         JTextArea textArea = new JTextArea(), foodResponseTextArea = new JTextArea();
         JTextField textField = new JTextField();
         JButton executeButton = new JButton("Lookup Food");
-        Dimension panelSize = new Dimension(300,700);
+        Dimension panelSize = new Dimension(350,700);
         Dimension userPanelSize = new Dimension(600, 700);
         final DefaultComboBoxModel<String> activityLevelComboBoxModel = new DefaultComboBoxModel<>(new String[] {"Sedentary","Light","Moderate","Heavy"});
         final DefaultComboBoxModel<String> genderComboBoxModel = new DefaultComboBoxModel<>(new String[] {"Male","Female"});
@@ -106,7 +108,7 @@ public class Main {
             JFrame frame = new JFrame("Nutrition Application");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             init(frame.getContentPane());
-            frame.setPreferredSize(new Dimension(1200, 800));
+            frame.setPreferredSize(new Dimension(1300, 800));
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
@@ -217,6 +219,7 @@ public class Main {
             });
             
             executeButton.addActionListener(e -> {
+                model.clearSearchResults();
                 String foodToSearch = textField.getText();
                 String jsonString = "";
                 FoodList searchResults = new FoodList(foodToSearch);
@@ -387,6 +390,7 @@ public class Main {
             JPanel foodPanel = new JPanel();
             foodPanel.setPreferredSize(panelSize);
             foodPanel.setMinimumSize(panelSize);
+            foodPanel.setMaximumSize(panelSize);
             textField.setToolTipText("Enter food to search!");
             
             tablePane = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -419,6 +423,7 @@ public class Main {
             JPanel textAreaPanel = new JPanel();
             textAreaPanel.setPreferredSize(panelSize);
             textAreaPanel.setMaximumSize(panelSize);
+            textAreaPanel.setMinimumSize(panelSize);
             textAreaPanel.setLayout(new BorderLayout());
             textArea.setSize(foodResponseTextArea.getSize());
             JScrollPane scrollPane = new JScrollPane(textArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -523,10 +528,10 @@ public class Main {
             return userPanel;
         }
 
-        private void setOptions(String searchTerm) {
+        private void setOptions(String searchTerm) throws UnsupportedEncodingException {
             options = new HashMap<>();
             options.put(Constants.USDA_FORMAT_KEY, Constants.USDA_FORMAT_VALUE);
-            options.put(Constants.USDA_SEARCH_TERM_KEY, searchTerm);
+            options.put(Constants.USDA_SEARCH_TERM_KEY, URLEncoder.encode(searchTerm, "UTF-8"));
             options.put(Constants.USDA_SORT_OPTION_KEY, Constants.USDA_SORT_FOODNAME);
             options.put(Constants.USDA_MAX_KEY, "10");
             options.put(Constants.USDA_OFFSET_KEY, "0");

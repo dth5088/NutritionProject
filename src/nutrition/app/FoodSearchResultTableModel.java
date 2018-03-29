@@ -20,7 +20,7 @@ public class FoodSearchResultTableModel extends AbstractTableModel{
     private static final long serialVersionUID = 1L;
     private List<USDAFood> rows;
     HashMap<String, USDAFood> mapLookup;
-    String[] columnNames = {"Food Name", "NDB Number"};
+    String[] columnNames = {"Food Name", "UPC","NDB Number"};
     
     public FoodSearchResultTableModel() {
         rows = new ArrayList<>();
@@ -49,7 +49,7 @@ public class FoodSearchResultTableModel extends AbstractTableModel{
      */
     @Override
     public boolean isCellEditable(int row, int column) {
-        return column >= 0 && column <4;
+        return false;
     } // end method isCellEditable
     
      /**
@@ -72,6 +72,13 @@ public class FoodSearchResultTableModel extends AbstractTableModel{
     public int getColumnCount() {
         return columnNames.length;
     } // end method getColumnCount
+    
+    public void clearSearchResults() {
+        rows.clear();
+        mapLookup.clear();
+        fireTableRowsDeleted(0, rows.size());
+        
+    }
     
     /**
      * Overrides AbstractTabelModel getColumnClass method.
@@ -116,6 +123,9 @@ public class FoodSearchResultTableModel extends AbstractTableModel{
                 value = food.getFoodName();
                 break;
             case 1:
+                value = food.getUPC();
+                break;
+            case 2:
                 value = food.getNDBNO();
                 break;
  

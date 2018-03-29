@@ -21,6 +21,7 @@ public class USDAFood {
     String ndbno;           // foods NDB Number
     String group;           // food group
     String ds;              // BL = Branded Food Products or SR = Standard Release
+    String upc;
     HashMap<String,String> map;
     
     public USDAFood(String[] arr) throws JSONException {
@@ -37,6 +38,7 @@ public class USDAFood {
                     break;
                 case "name":
                     name = value;
+                    setUPC(value);
                     break;
                 case "group":
                     group = value;
@@ -63,6 +65,7 @@ public class USDAFood {
                     break;
                 case "name":
                     name = value.toString();
+                    setUPC(value.toString());
                     break;
                 case "group":
                     group = value.toString();
@@ -89,7 +92,23 @@ public class USDAFood {
         return ndbno;
     }
     
+    public String getUPC() {
+        return upc;
+    }
+    
     public String toString() {
         return String.format("%s %s %s %s", "name:",name,"ndbno:",ndbno);
+    }
+
+    private void setUPC(String value) {
+        String[] splitName = value.split(",");
+        for(String str : splitName) {
+            if(str.toLowerCase().contains("upc:"))
+            {
+                String[] upcArray = str.split(":");
+                upc = upcArray[1];
+                System.out.println(upc);
+            }    
+        }
     }
 }
