@@ -21,5 +21,7 @@ public class Constants {
     public static final String KEY_QUERY_PARAMETER = "app_key";
     public static final String APP_QUERY_PARAMETER = "app_id";
     
+    public static String USDA_API_KEY = "b9KNuZaS5aw9SP8nXcS94XoPwEeGPHrMkzGJUN7H";
+    
     
 }
