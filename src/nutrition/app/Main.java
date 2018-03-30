@@ -1,10 +1,14 @@
 package nutrition.app;
 
+import UI.AdvancedSearchPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -30,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -37,6 +42,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellRenderer;
@@ -78,8 +84,8 @@ public class Main {
         JTextArea textArea = new JTextArea(), foodResponseTextArea = new JTextArea();
         JTextField textField = new JTextField();
         JButton executeButton = new JButton("Lookup Food");
-        Dimension panelSize = new Dimension(350,700);
-        Dimension userPanelSize = new Dimension(600, 700);
+        Dimension panelSize = new Dimension(500,450);
+        Dimension userPanelSize = new Dimension(950, 450);
         final DefaultComboBoxModel<String> activityLevelComboBoxModel = new DefaultComboBoxModel<>(new String[] {"Sedentary","Light","Moderate","Heavy"});
         final DefaultComboBoxModel<String> genderComboBoxModel = new DefaultComboBoxModel<>(new String[] {"Male","Female"});
         final DefaultComboBoxModel<String> goalComboBoxModel = new DefaultComboBoxModel<>(new String[] {"Fat Loss","Maintain","Gain Mass"});
@@ -95,8 +101,11 @@ public class Main {
         FoodSearchResultTableModel model = new FoodSearchResultTableModel();
         JTable table;
         HashMap<String,String> options;
-        
-        
+        JTabbedPane mainTabbedPane = new JTabbedPane();
+        Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+        Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+        Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
+        AdvancedSearchPanel searchPanel = new AdvancedSearchPanel();
         public MainFrame() {
             options = new HashMap<>();
             createAndShowGUI();
@@ -108,7 +117,7 @@ public class Main {
             JFrame frame = new JFrame("Nutrition Application");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             init(frame.getContentPane());
-            frame.setPreferredSize(new Dimension(1300, 800));
+            frame.setPreferredSize(new Dimension(1000, 600));
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
@@ -341,28 +350,38 @@ public class Main {
         }
         
         private void setLayout(Container contentPane) {
-            GroupLayout layout = new GroupLayout(contentPane);
-            contentPane.setLayout(layout);
-            layout.setAutoCreateGaps(true);
-            layout.setAutoCreateContainerGaps(true);
-            
             JPanel foodPanel = createFoodPanel();
             JPanel textAreaPanel = createTextAreaPanel();
+            
             JPanel userPanel = createUserPanel();
-            
-            layout.setHorizontalGroup(
-                    layout.createSequentialGroup()
+            JPanel tabPanel1 = new JPanel();
+            GroupLayout tabPanel1Layout = new GroupLayout(tabPanel1);
+            tabPanel1.setLayout(tabPanel1Layout);
+            tabPanel1Layout.setAutoCreateGaps(true);
+            tabPanel1Layout.setAutoCreateContainerGaps(true);
+           
+            tabPanel1Layout.setHorizontalGroup(
+                    tabPanel1Layout.createSequentialGroup()
                         .addComponent(foodPanel)
                         .addComponent(textAreaPanel)
-                        .addComponent(userPanel)
+            );
+            tabPanel1Layout.setVerticalGroup(tabPanel1Layout.createSequentialGroup()
+                    .addGroup(tabPanel1Layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(foodPanel)
+                        .addComponent(textAreaPanel))
             );
             
-            layout.setVerticalGroup(layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(foodPanel)
-                        .addComponent(textAreaPanel)
-                        .addComponent(userPanel))
-            );
+            
+            
+            
+            
+            mainTabbedPane.addTab("Nutrition Tool", tabPanel1);
+            
+            mainTabbedPane.addTab("User Details", userPanel);
+            
+            
+            
+            contentPane.add(mainTabbedPane);
             
         }
         
@@ -388,6 +407,8 @@ public class Main {
         }
         private JPanel createFoodPanel() {
             JPanel foodPanel = new JPanel();
+            Dimension d = new Dimension(375,50);
+            searchPanel.setPreferredSize(d);
             foodPanel.setPreferredSize(panelSize);
             foodPanel.setMinimumSize(panelSize);
             foodPanel.setMaximumSize(panelSize);
@@ -402,12 +423,13 @@ public class Main {
             
             layout.setHorizontalGroup(
                 layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                             .addGroup(layout.createSequentialGroup()
                                     .addComponent(textField)
                                     .addComponent(executeButton)
                             )
-                            .addComponent(tablePane)));
+                    .addComponent(searchPanel)
+                    .addComponent(tablePane)));
                     
                     
             
@@ -415,19 +437,31 @@ public class Main {
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(textField)
                     .addComponent(executeButton))
+                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchPanel))
                 .addComponent(tablePane));
             return foodPanel;
         }
         
         private JPanel createTextAreaPanel() {
-            JPanel textAreaPanel = new JPanel();
-            textAreaPanel.setPreferredSize(panelSize);
-            textAreaPanel.setMaximumSize(panelSize);
-            textAreaPanel.setMinimumSize(panelSize);
-            textAreaPanel.setLayout(new BorderLayout());
-            textArea.setSize(foodResponseTextArea.getSize());
+            JPanel textAreaPanel = new JPanel(new GridBagLayout());
+            textAreaPanel.setMinimumSize(new Dimension(400,450));
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(30,5,-45,5);
+            
+            
+            
+            
+            
+            //textAreaPanel.setLayout(new BorderLayout());
             JScrollPane scrollPane = new JScrollPane(textArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            textAreaPanel.add(scrollPane);
+            scrollPane.setBorder(BorderFactory.createTitledBorder(compound,"Display"));
+            Dimension test = new Dimension(375,350);
+            scrollPane.setMinimumSize(test);
+            scrollPane.setMaximumSize(test);
+            scrollPane.setPreferredSize(test);
+            
+            textAreaPanel.add(scrollPane, gbc);
             return textAreaPanel;
         }
         
@@ -530,10 +564,26 @@ public class Main {
 
         private void setOptions(String searchTerm) throws UnsupportedEncodingException {
             options = new HashMap<>();
+            String sortString = searchPanel.getSortOrderSelection();
+            String foodGroupString = searchPanel.getFoodGroupSelection();
+            String dataSourceString = searchPanel.getDataSourceSelection();
+            String maxReturnString = searchPanel.getMaxReturnSelection();
+            switch(sortString.toUpperCase()) {
+                case  "FOOD NAME":
+                    options.put(Constants.USDA_SORT_OPTION_KEY, "n");
+                    break;
+                case "RELEVANCE":
+                     options.put(Constants.USDA_SORT_OPTION_KEY,"r");
+                     break;
+            }
+            
+            if(dataSourceString.equalsIgnoreCase("Standard Reference"))
+                options.put(Constants.USDA_FOOD_GROUP_KEY, foodGroupString);
+            
             options.put(Constants.USDA_FORMAT_KEY, Constants.USDA_FORMAT_VALUE);
             options.put(Constants.USDA_SEARCH_TERM_KEY, URLEncoder.encode(searchTerm, "UTF-8"));
-            options.put(Constants.USDA_SORT_OPTION_KEY, Constants.USDA_SORT_FOODNAME);
-            options.put(Constants.USDA_MAX_KEY, "10");
+            options.put(Constants.USDA_DATA_SOURCE_KEY, dataSourceString);
+            options.put(Constants.USDA_MAX_KEY, maxReturnString);
             options.put(Constants.USDA_OFFSET_KEY, "0");
             options.put(Constants.USDA_API_KEY, Constants.USDA_API_KEYVALUE);
         }
