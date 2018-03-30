@@ -277,6 +277,8 @@ public class Main {
                     
                 }
             });
+            
+            
         }
         
         private void init(Container contentPane) {
@@ -424,21 +426,22 @@ public class Main {
             layout.setHorizontalGroup(
                 layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                            .addComponent(searchPanel)
                             .addGroup(layout.createSequentialGroup()
                                     .addComponent(textField)
                                     .addComponent(executeButton)
                             )
-                    .addComponent(searchPanel)
+                    //.addComponent(searchPanel)
                     .addComponent(tablePane)));
                     
                     
             
             layout.setVerticalGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchPanel))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(textField)
                     .addComponent(executeButton))
-                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchPanel))
                 .addComponent(tablePane));
             return foodPanel;
         }
@@ -448,12 +451,6 @@ public class Main {
             textAreaPanel.setMinimumSize(new Dimension(400,450));
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(30,5,-45,5);
-            
-            
-            
-            
-            
-            //textAreaPanel.setLayout(new BorderLayout());
             JScrollPane scrollPane = new JScrollPane(textArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             scrollPane.setBorder(BorderFactory.createTitledBorder(compound,"Display"));
             Dimension test = new Dimension(375,350);

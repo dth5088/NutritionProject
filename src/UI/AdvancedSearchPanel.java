@@ -6,16 +6,20 @@
 package UI;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.util.HashMap;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 /**
  *
@@ -25,6 +29,11 @@ public class AdvancedSearchPanel extends JPanel{
     HashMap<String, DefaultComboBoxModel<String>> mappedComboBoxModels;
     JComboBox foodGroupComboBox, dataSourceComboBox, sortOrderComboBox, maxReturnComboBox;
     JLabel foodGroupLabel, dataSourceLabel, sortOrderLabel,maxReturnLabel;
+    Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+    Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+    Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
+    int style = Font.BOLD | Font.ITALIC;
+    Font font = new Font ("Arial", style , 14);
     
     public AdvancedSearchPanel() {
         
@@ -36,89 +45,36 @@ public class AdvancedSearchPanel extends JPanel{
         mappedComboBoxModels.putIfAbsent("max",getMaxReturn());
         setupComboBoxes();
         setupPanelLayoutGBC();
+        setFont(font);
     }
     
     private void setupPanelLayoutGBC() {
-        foodGroupLabel = new JLabel("Select Food Group");
-        dataSourceLabel = new JLabel("Select Source");
-        sortOrderLabel = new JLabel("Select Sort Order");
-        maxReturnLabel = new JLabel("Select Max #");
+        foodGroupLabel = new JLabel("Food Group");
+        dataSourceLabel = new JLabel("Source");
+        sortOrderLabel = new JLabel("Sort Order");
+        maxReturnLabel = new JLabel("# Results");
         
+        foodGroupLabel.setFont(font);
+        dataSourceLabel.setFont(font);
+        sortOrderLabel.setFont(font);
+        maxReturnLabel.setFont(font);
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5,10,5,10);
+        gbc.insets = new Insets(5,1,5,1);
         
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(foodGroupLabel,gbc);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        add(foodGroupComboBox, gbc);
+        add(createBorderedPanel(dataSourceLabel, dataSourceComboBox), gbc);
         
         gbc.gridx = 1;
-        gbc.gridy = 0;
-        add(dataSourceLabel, gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        add(dataSourceComboBox, gbc);
+        add(createBorderedPanel(foodGroupLabel,foodGroupComboBox), gbc);
         
         gbc.gridx = 2;
-        gbc.gridy = 0;
-        add(sortOrderLabel, gbc);
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        add(sortOrderComboBox, gbc);
+        add(createBorderedPanel(sortOrderLabel,sortOrderComboBox), gbc);
         
         gbc.gridx = 3;
-        gbc.gridy = 0;
-        add(maxReturnLabel, gbc);
-        gbc.gridx = 3;
-        gbc.gridy = 1;
-        add(maxReturnComboBox, gbc); 
-    }
-    private void setupPanelLayout() {
-        foodGroupLabel = new JLabel("Select Food Group");
-        dataSourceLabel = new JLabel("Select Source");
-        sortOrderLabel = new JLabel("Select Sort Order");
-        maxReturnLabel = new JLabel("Select # Results to Return");
-        GroupLayout layout = new GroupLayout(this);
-        setLayout(layout);
-        layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
-        layout.setHorizontalGroup(
-                layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(foodGroupLabel)
-                                .addComponent(dataSourceLabel)
-                                .addComponent(sortOrderLabel)
-                                .addComponent(maxReturnLabel)
-                            )
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(foodGroupComboBox)
-                                .addComponent(dataSourceComboBox)
-                                .addComponent(sortOrderComboBox)
-                                .addComponent(maxReturnComboBox)   
-                            )
-                    )
-        );
-        
-         layout.setVerticalGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(foodGroupLabel)
-                        .addComponent(dataSourceLabel)
-                        .addComponent(sortOrderLabel)
-                        .addComponent(maxReturnLabel))
-                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(foodGroupComboBox)
-                        .addComponent(dataSourceComboBox)
-                        .addComponent(sortOrderComboBox)
-                        .addComponent(maxReturnComboBox)   
-                 )
-         );
-         
-         layout.linkSize(SwingConstants.HORIZONTAL, foodGroupLabel, dataSourceLabel, sortOrderLabel, maxReturnLabel, foodGroupComboBox, dataSourceComboBox, sortOrderComboBox, maxReturnComboBox);
-         layout.linkSize(SwingConstants.VERTICAL, foodGroupLabel, dataSourceLabel, sortOrderLabel, maxReturnLabel, foodGroupComboBox, dataSourceComboBox, sortOrderComboBox, maxReturnComboBox);
+        add(createBorderedPanel(maxReturnLabel, maxReturnComboBox), gbc);
+        setBorder(BorderFactory.createTitledBorder(loweredbevel, "Search Options"));
     }
     private void setupComboBoxes() {
         for(HashMap.Entry<String,DefaultComboBoxModel<String>> entry : mappedComboBoxModels.entrySet())
@@ -128,6 +84,7 @@ public class AdvancedSearchPanel extends JPanel{
                 case "fg":
                     foodGroupComboBox = new JComboBox(entry.getValue());
                     foodGroupComboBox.setPrototypeDisplayValue("XXXXXXXXXXX");
+                    foodGroupComboBox.setEnabled(false);
                     break;
                 case "ds":
                     dataSourceComboBox = new JComboBox(entry.getValue());
@@ -144,6 +101,8 @@ public class AdvancedSearchPanel extends JPanel{
                 
             }
         }
+        
+        setActionListener();
 
     }
     
@@ -175,8 +134,8 @@ public class AdvancedSearchPanel extends JPanel{
      
     private DefaultComboBoxModel<String> getMaxReturn() {
         String[] nums = new String[20];
-        for(int i = 1; i < 20; i++) {
-            nums[i] = (i*5) + "";
+        for(int i = 1; i < 21; i++) {
+            nums[i-1] = (i*5) + "";
         }
         DefaultComboBoxModel<String> temp = new DefaultComboBoxModel<>(nums);
         return temp;
@@ -196,6 +155,22 @@ public class AdvancedSearchPanel extends JPanel{
     
     public String getMaxReturnSelection() {
         return maxReturnComboBox.getSelectedItem().toString();
+    }
+
+    private void setActionListener() {
+       dataSourceComboBox.addActionListener(e -> {
+           foodGroupComboBox.setEnabled(dataSourceComboBox.getSelectedIndex() == 1);
+       });
+    }
+    
+    private JPanel createBorderedPanel(JLabel label, JComboBox combo) {
+        label.setHorizontalAlignment((JLabel.CENTER));
+        JPanel panel = new JPanel(new GridLayout(2,1));
+        panel.add(label);
+        panel.add(combo);
+        panel.setBorder(raisedbevel);
+        return panel;
+        
     }
     
     
