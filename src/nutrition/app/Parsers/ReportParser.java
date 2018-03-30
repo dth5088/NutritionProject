@@ -28,6 +28,9 @@ public class ReportParser {
         }
     }
     
+    public ArrayList<USDANutrient> getNutrients() {
+        return nutrientsList;
+    }
     public String toString() {
         String str = "";
         for(USDANutrient nutrient : nutrientsList) {

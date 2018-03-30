@@ -23,6 +23,24 @@ public class Measure {
         this.eunit = measureObject.get("eunit").toString();
     }
     
+    public String getQty() {
+        return qty;
+    }
+    
+    public String getLabel() {
+        return label;
+    }
+    public String getEQV() {
+        return eqv;
+    }
+    
+    public String getValue() {
+        return value;
+    }
+    
+    public String geteunit() {
+        return eunit;
+    }
     public String toString() {
         return String.format("%s %s %s %s %s %s %s %s %s %s", "qty:",qty,"label:",label,"eqv:",eqv,"value:",value,"eunit:",eunit);
     }

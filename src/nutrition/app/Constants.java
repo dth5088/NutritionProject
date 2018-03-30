@@ -5,6 +5,9 @@
  */
 package nutrition.app;
 
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+
 /**
  *
  * @author dth5088
@@ -26,6 +29,10 @@ public class Constants {
     public static String USDA_API_KEYVALUE = "b9KNuZaS5aw9SP8nXcS94XoPwEeGPHrMkzGJUN7H";
     public static String USDA_SEARCH_FOOD_URL = "https://api.nal.usda.gov/ndb/search/";
     public static String USDA_REPORT_URL = "https://api.nal.usda.gov/ndb/reports/";
+    
+    public static Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+    public static Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+    public static Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
     
     public static String USDA_FORMAT_KEY = "format";
     public static String USDA_SEARCH_TERM_KEY = "q";

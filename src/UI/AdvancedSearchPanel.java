@@ -5,7 +5,6 @@
  */
 package UI;
 
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,12 +13,11 @@ import java.awt.Insets;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 /**
  *

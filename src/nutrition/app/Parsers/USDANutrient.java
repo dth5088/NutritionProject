@@ -34,7 +34,22 @@ public class USDANutrient {
             measures.add(new Measure((JSONObject) arr.get(i)));
         }
     }
+    public String getName() {
+        return name;
+    }
+    public String getUnit() {
+        return unit;
+    }
+    public String getNutrientId() {
+        return nutrientId;
+    }
+    public String getDerivation() {
+        return derivation;
+    }
     
+    public ArrayList<Measure> getMeasures() {
+        return measures;
+    }
     public String toString() {
         String str = name + " (" +unit+") \n";
         for(Measure measure : measures)

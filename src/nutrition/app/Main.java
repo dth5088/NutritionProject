@@ -1,6 +1,8 @@
 package nutrition.app;
 
+import UI.FoodSearchResultTableModel;
 import UI.AdvancedSearchPanel;
+import UI.NutrientResultPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -50,6 +52,7 @@ import nutrition.app.Parsers.FoodList;
 import nutrition.app.Parsers.FoodParser;
 import nutrition.app.Parsers.ReportParser;
 import nutrition.app.Parsers.USDAFood;
+import nutrition.app.Parsers.USDANutrient;
 import org.json.JSONException;
 
 
@@ -106,6 +109,8 @@ public class Main {
         Border raisedbevel = BorderFactory.createRaisedBevelBorder();
         Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
         AdvancedSearchPanel searchPanel = new AdvancedSearchPanel();
+        NutrientResultPanel nutrientResults = new NutrientResultPanel();
+        
         public MainFrame() {
             options = new HashMap<>();
             createAndShowGUI();
@@ -265,10 +270,11 @@ public class Main {
                     try {
                         String reportString = FoodService.getNutrientsFromNDBno(options);
                         ReportParser foodParser = new ReportParser(reportString);
+                        for(USDANutrient nutrient : foodParser.getNutrients())
+                        {
+                            nutrientResults.addNutrientToDisplay(nutrient);
+                        }
                         
-                        textArea.setText("Nutrients for: "+food.getFoodName()+"\n");
-                        textArea.append(foodParser.toString());
-                        textArea.setCaretPosition(0);
                         
                     } catch(IOException | JSONException ignore) {
                         
@@ -355,6 +361,7 @@ public class Main {
             JPanel foodPanel = createFoodPanel();
             JPanel textAreaPanel = createTextAreaPanel();
             
+            
             JPanel userPanel = createUserPanel();
             JPanel tabPanel1 = new JPanel();
             GroupLayout tabPanel1Layout = new GroupLayout(tabPanel1);
@@ -365,12 +372,12 @@ public class Main {
             tabPanel1Layout.setHorizontalGroup(
                     tabPanel1Layout.createSequentialGroup()
                         .addComponent(foodPanel)
-                        .addComponent(textAreaPanel)
+                        .addComponent(nutrientResults)
             );
             tabPanel1Layout.setVerticalGroup(tabPanel1Layout.createSequentialGroup()
                     .addGroup(tabPanel1Layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(foodPanel)
-                        .addComponent(textAreaPanel))
+                        .addComponent(nutrientResults))
             );
             
             
