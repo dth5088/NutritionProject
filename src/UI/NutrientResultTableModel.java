@@ -20,7 +20,7 @@ public class NutrientResultTableModel extends AbstractTableModel{
     private static final long serialVersionUID = 1L;
     private List<NutrientRow> rows;
     private HashMap<USDANutrient, ArrayList<NutrientRow>> mapLookup;
-    String[] columnNames = {"Nutrient","Quantity","Label","Amount"};
+    String[] columnNames = {"Nutrient","QTY","Label","Amount"};
     
     public NutrientResultTableModel() {
         rows = new ArrayList<>();
@@ -35,9 +35,9 @@ public class NutrientResultTableModel extends AbstractTableModel{
             NutrientRow row = new NutrientRow(nutrient, measure);
             mapLookup.get(nutrient).add(row);
             rows.add(row);
-            
+            fireTableRowsInserted(rows.size()-1, rows.size()-1);
         }
-        fireTableRowsInserted(rows.size()-1, rows.size()-1);
+        
     }
     public void clearRows() {
         rows.clear();
@@ -58,7 +58,12 @@ public class NutrientResultTableModel extends AbstractTableModel{
     public int getColumnCount() {
         return columnNames.length;
     }
-
+    
+    @Override
+    public String getColumnName(int column) {
+        return columnNames[column];
+    }
+    
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         NutrientRow nutrientRow = rows.get(rowIndex);

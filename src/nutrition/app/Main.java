@@ -109,7 +109,7 @@ public class Main {
         Border raisedbevel = BorderFactory.createRaisedBevelBorder();
         Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
         AdvancedSearchPanel searchPanel = new AdvancedSearchPanel();
-        NutrientResultPanel nutrientResults = new NutrientResultPanel();
+        NutrientResultPanel nutrientResults;
         
         public MainFrame() {
             options = new HashMap<>();
@@ -233,6 +233,7 @@ public class Main {
             });
             
             executeButton.addActionListener(e -> {
+                nutrientResults.clearNutrients();
                 model.clearSearchResults();
                 String foodToSearch = textField.getText();
                 String jsonString = "";
@@ -265,7 +266,10 @@ public class Main {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     int row = table.getSelectedRow();
+                    nutrientResults.clearNutrients();
                     USDAFood food = model.getRow(row);
+                    textField.setText(food.getFoodName());
+                    textField.setCaretPosition(0);
                     setOptionsForReport(food.getNDBNO(), "b");
                     try {
                         String reportString = FoodService.getNutrientsFromNDBno(options);
@@ -358,8 +362,12 @@ public class Main {
         }
         
         private void setLayout(Container contentPane) {
+            nutrientResults = new NutrientResultPanel();
             JPanel foodPanel = createFoodPanel();
             JPanel textAreaPanel = createTextAreaPanel();
+            //nutrientResults.setPreferredSize(new Dimension(400,450));
+            //nutrientResults.setMinimumSize(new Dimension(400,450));
+           
             
             
             JPanel userPanel = createUserPanel();

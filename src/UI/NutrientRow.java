@@ -25,7 +25,7 @@ public class NutrientRow {
     
     public NutrientRow(USDANutrient nutrient, Measure measure) {
         this.nutrientName = nutrient.getName();
-        this.quantity = measure.getQty();
+        this.quantity = measure.getQty().replace(".0","");
         this.label = measure.getLabel();
         this.nutrient = nutrient;
         this.measure = measure.getValue();

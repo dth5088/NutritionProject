@@ -5,14 +5,21 @@
  */
 package UI;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
+import javax.swing.table.TableCellRenderer;
 import nutrition.app.Constants;
 import nutrition.app.Parsers.USDANutrient;
 
@@ -27,14 +34,39 @@ public class NutrientResultPanel extends JPanel{
     
     public NutrientResultPanel() {
         super.setLayout(new GridBagLayout());
-        super.setMinimumSize(new Dimension(400,450));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(30,5,-45,5);
+        gbc.insets = new Insets(95,5,0,5);
         
         model = new  NutrientResultTableModel();
-        table = new JTable(model);
+        table = new JTable(model) {
+                @Override
+                public Component prepareRenderer(
+                TableCellRenderer renderer, int row, int column) {
+                    Component c = super.prepareRenderer(renderer, row, column);
+                    if(column > 0 && column < 4)
+                    {
+                        ((JLabel)c).setHorizontalAlignment(SwingConstants.CENTER);
+                    }
+                    if(!isRowSelected(row)) {
+                        String type = (String) getModel().getValueAt(row, 0);
+                        c.setBackground( row % 2 == 0 ? null : Color.LIGHT_GRAY);
+                        ((JComponent)c).setBorder(new LineBorder(Color.LIGHT_GRAY));
+                    }
+                    setRowHeight(row, 30);
+                    return c;
+                }
+            };
+        table.getColumnModel().getColumn(0).setPreferredWidth(150);
+        table.getColumnModel().getColumn(1).setPreferredWidth(50);
+        table.getColumnModel().getColumn(2).setPreferredWidth(100);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
+        
         scrollPane = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBorder(BorderFactory.createTitledBorder(Constants.compound, "Display"));
+        Dimension test = new Dimension(375,350);
+        scrollPane.setMinimumSize(test);
+        scrollPane.setMaximumSize(test);
+        scrollPane.setPreferredSize(test);
         super.add(scrollPane, gbc);
     }
     
