@@ -30,7 +30,7 @@ public class UserParser {
     
     static final String FILE_PATH = "./app/assets/usr.txt";
     
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     User user = null;
     
     
@@ -39,15 +39,13 @@ public class UserParser {
         String workingDirectory = System.getProperty("user.dir");
         
         String fName = "usr.txt";
-        File file = new File(workingDirectory + File.separator + fName);
-        if(!file.exists())
-        {
-            System.out.println(file + " does not exist!");
-        }
+//        File file = new File(workingDirectory + File.separator + fName);
+//        if(!file.exists())
+//        {
+//            System.out.println(file + " does not exist!");
+//        }
         try {
-            try (Stream<String> lines = Files.lines(Paths.get(FILE_PATH))) {
-                if(lines.count() == 0)
-                    return;
+            try (Stream<String> lines = Files.lines(Paths.get(workingDirectory + File.separator + fName))) {
                 lines.forEach((line) -> {
                     String[] splitLine = line.split(",");
                     if(splitLine.length > 7)
@@ -61,21 +59,22 @@ public class UserParser {
                         String dobString = splitLine[4];
                         LocalDate dateOfBirth = LocalDate.parse(dobString, formatter);
                         
-                        String goal = splitLine[6];
+                        String goal = splitLine[5];
                         Goal fitnessGoal = getFitnessGoal(goal);
                         
-                        String activity = splitLine[7];
+                        String activity = splitLine[6];
                         ActivityLevel activityLevel = getActivityLevel(activity);
                         
-                        String genderString = splitLine[8];
+                        String genderString = splitLine[7];
                         Gender gender = getGender(genderString);
                         
                         user = new User(firstName,lastName,height,weight,dateOfBirth,gender,activityLevel,fitnessGoal);
                     }
                 });
+                lines.close();
             }
         } catch(IOException e) { 
-            
+            e.printStackTrace();
         }
     }
     
@@ -101,13 +100,13 @@ public class UserParser {
     private Goal getFitnessGoal(String goalString) {
         Goal returnGoal = null;
         switch(goalString.toUpperCase()) {
-            case "FAT_LOSS":
+            case "FAT LOSS":
                 returnGoal = Goal.FAT_LOSS;
                 break;
             case "MAINTAIN":
                 returnGoal = Goal.MAINTAIN;
                 break;
-            case "GAIN_MASS":
+            case "GAIN MASS":
                 returnGoal = Goal.GAIN_MASS;
                 break;
         }

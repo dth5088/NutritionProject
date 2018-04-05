@@ -3,6 +3,7 @@ package nutrition.app;
 import UI.FoodSearchResultTableModel;
 import UI.AdvancedSearchPanel;
 import UI.NutrientResultPanel;
+import UI.UserDetailPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -115,6 +116,8 @@ public class Main {
         
         public MainFrame() {
             options = new HashMap<>();
+            if(userParser.getUser() != null)
+                user = userParser.getUser();
             createAndShowGUI();
             
             
@@ -181,48 +184,10 @@ public class Main {
                 String genderString = genderComboBox.getSelectedItem().toString();
                 String goalString = goalComboBox.getSelectedItem().toString();
                 String activityLevelString = activityLevelComboBox.getSelectedItem().toString();
-                Gender gender = null;
-                Goal goal = null;
-                ActivityLevel activityLevel = null;
+                Gender gender = getGender(genderString);
+                Goal goal = getGoal(goalString);
+                ActivityLevel activityLevel = getActivityLevel(activityLevelString);
                 
-                switch(genderString.toUpperCase()) {
-                    case "MALE":
-                        gender = Gender.MALE;
-                        break;
-                    case "FEMALE":
-                        gender = Gender.FEMALE;
-                        break;
-                }
-                
-                switch(goalString.toUpperCase()) {
-                    case "FAT LOSS":
-                        goal = Goal.FAT_LOSS;
-                        break;
-                    case "MAINTAIN":
-                        goal = Goal.MAINTAIN;
-                        break;
-                    case "GAIN MASS":
-                        goal = Goal.GAIN_MASS;
-                        break;
-                }
-                
-                switch(activityLevelString.toUpperCase()) {
-                    case "SEDENTARY":
-                        activityLevel = ActivityLevel.SEDENTARY;
-                        break;
-                    
-                    case "LIGHT":
-                        activityLevel = ActivityLevel.LIGHT;
-                        break;
-                        
-                    case "MODERATE":
-                        activityLevel = ActivityLevel.MODERATE;
-                        break;
-                        
-                    case "HEAVY":
-                        activityLevel = ActivityLevel.HEAVY;
-                        break;
-                }
                 
                 if(goal != null && activityLevel != null && gender != null)
                 {
@@ -299,6 +264,45 @@ public class Main {
             
         }
         
+        private Gender getGender(String genderString) {
+            switch(genderString) {
+                case "Male":
+                    return Gender.MALE;
+                case "Female":
+                    return Gender.FEMALE;
+                default:
+                    return Gender.MALE;
+            }
+        }
+        
+        private Goal getGoal(String goalString) {
+            switch(goalString) {
+                 case "Fat Loss":
+                        return Goal.FAT_LOSS;
+                    case "Maintain":
+                        return Goal.MAINTAIN;
+                    case "Gain Mass":
+                        return Goal.GAIN_MASS;
+                    default:
+                        return Goal.FAT_LOSS;
+            }
+        }
+        
+        private ActivityLevel getActivityLevel(String activityLevelString) {
+            switch(activityLevelString)
+            {
+                 case "Sedentary":
+                        return ActivityLevel.SEDENTARY;
+                    case "Light":
+                        return ActivityLevel.LIGHT;
+                    case "Moderate":
+                        return ActivityLevel.MODERATE;
+                    case "Heavy":
+                        return ActivityLevel.HEAVY;
+                    default:
+                        return ActivityLevel.SEDENTARY;
+            }
+        }
         private void init(Container contentPane) {
             DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(Locale.getDefault());
             LocalDate date = LocalDate.now();
@@ -376,9 +380,11 @@ public class Main {
             //nutrientResults.setPreferredSize(new Dimension(400,450));
             //nutrientResults.setMinimumSize(new Dimension(400,450));
            
-            
-            
-            JPanel userPanel = createUserPanel();
+            JPanel userPanel;
+            if(user != null)
+                userPanel = new UserDetailPanel(user);
+            else
+                userPanel = createUserPanel();
             JPanel tabPanel1 = new JPanel();
             GroupLayout tabPanel1Layout = new GroupLayout(tabPanel1);
             tabPanel1.setLayout(tabPanel1Layout);
@@ -484,6 +490,7 @@ public class Main {
             textAreaPanel.add(scrollPane, gbc);
             return textAreaPanel;
         }
+        
         
         private JPanel createUserPanel() {
             JPanel userPanel = new JPanel();

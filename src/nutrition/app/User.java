@@ -28,43 +28,43 @@ public class User {
     private double REE = 0;
     private double TDEE = 0;
     
-    /**
-     * Constructs a new User.
-     * 
-     * @param firstName
-     * @param lastName
-     * @param height
-     * @param weight
-     * @param dob 
-     */
-    public User(String firstName, String lastName, double height, double weight, LocalDate dob) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.height = height;
-        this.weight = weight;
-        this.dob = dob;
-        setAge();
-    }
-    
-    /**
-     * Constructs a new User.
-     * 
-     * @param firstName
-     * @param lastName
-     * @param height
-     * @param weight
-     * @param dob
-     * @param gender 
-     */
-    public User(String firstName, String lastName, double height, double weight, LocalDate dob, Gender gender) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.height = height;
-        this.weight = weight;
-        this.dob = dob;
-        this.gender = gender;
-        setAge();
-    }
+//    /**
+//     * Constructs a new User.
+//     * 
+//     * @param firstName
+//     * @param lastName
+//     * @param height
+//     * @param weight
+//     * @param dob 
+//     */
+//    public User(String firstName, String lastName, double height, double weight, LocalDate dob) {
+//        this.firstName = firstName;
+//        this.lastName = lastName;
+//        this.height = height;
+//        this.weight = weight;
+//        this.dob = dob;
+//        setAge();
+//    }
+//    
+//    /**
+//     * Constructs a new User.
+//     * 
+//     * @param firstName
+//     * @param lastName
+//     * @param height
+//     * @param weight
+//     * @param dob
+//     * @param gender 
+//     */
+//    public User(String firstName, String lastName, double height, double weight, LocalDate dob, Gender gender) {
+//        this.firstName = firstName;
+//        this.lastName = lastName;
+//        this.height = height;
+//        this.weight = weight;
+//        this.dob = dob;
+//        this.gender = gender;
+//        setAge();
+//    }
 
     /**
      * Constructs a new User.
@@ -237,7 +237,7 @@ public class User {
         return null;
     }
     
-    private String getGenderString() {
+    public String getGenderString() {
          switch(gender)
         {
             case MALE:
@@ -248,7 +248,7 @@ public class User {
          return "";
     }
     
-    private String getFitnessGoalString() {
+    public String getFitnessGoalString() {
          switch(fitnessGoal)
         {
             case FAT_LOSS:
@@ -257,20 +257,21 @@ public class User {
                 return "Maintain";
             case GAIN_MASS:
                 return "Gain Mass";
+            default:
+                return "Fat Loss";
         }
-         return "";
     }
     
-    private String getActivityLevelString() {
+    public String getActivityLevelString() {
         switch(activityLevel) {
             case SEDENTARY:
-                return "sedentary";
+                return "Sedentary";
             case LIGHT:
-                return "light";
+                return "Light";
             case MODERATE:
-                return "moderate";
+                return "Moderate";
             case HEAVY:
-                return "heavy";
+                return "Heavy";
         }
         return "";
     }
@@ -304,6 +305,26 @@ public class User {
             str += "\n" + macros.toString();
         }
         return str;
+    }
+    
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+    
+    public String getHeightString() {
+        return height + "";
+    }
+    
+    public String getWeightString() {
+        return String.format("%.2f",weight);
+    }
+    
+    public String getbdayString() {
+        return dob.toString();
+    }
+    
+    public String getAgeString() {
+        return age + "";
     }
 
     //firstName,lastName,height,weight,dateofbirth,age,goal,activity,gender

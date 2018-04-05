@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import nutrition.app.Food;
 import nutrition.app.User;
 
@@ -31,15 +32,23 @@ public class foodListParser {
         this.user = user;
         list = new ArrayList<>();
         file = new File(workingDirectory + File.separator + fileName);
-        if(file.createNewFile())
-            System.out.println("File is created!");
-        else 
-            System.out.println("File already exists");
+        if(!file.exists())
+            file.createNewFile();
+        
+        parseTextFile();
+    }
+    
+    public ArrayList<Food> getParsedFood() {
+        return list;
     }
     
     private void parseTextFile() {
         try {
             Stream<String> lines = Files.lines(Paths.get(workingDirectory,fileName));
+            if(lines.count() == 0)
+            {
+                return;
+            }
             lines.forEach((line) -> {
                 String[] splitLine = line.split(",");
                 String foodName = splitLine[0];
@@ -69,7 +78,7 @@ public class foodListParser {
         }
     }
     
-    public void addFood(Food food) {
+    public void addFoodToList(Food food) {
         list.add(food);
     }
     
@@ -80,11 +89,20 @@ public class foodListParser {
             OutputStreamWriter osw = new OutputStreamWriter(fos);
             for(Food food : list) {
                 String lineString = "";
-                for(HashMap.Entry<String,Object> entry : food.getMapped())
+                HashMap<String,Object> foodMap = food.getMapped();
+                String separator = ",";
+                for(HashMap.Entry<String,Object> entry : foodMap.entrySet())
                 {
+                    String key = entry.getKey();
+                    String value = entry.getValue().toString();
+                    String joined = String.join(":", key,value);
+                    lineString = String.join(separator, lineString, joined);
                     
                 }
+                lineString += "\n";
+                osw.write(lineString);
             }
+            osw.close();
         }
     }
 }
