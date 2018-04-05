@@ -52,6 +52,21 @@ public class Macronutrients {
         }
     }
     
+    public double getCarbohydrates() {
+        return carbohydrate;
+    }
+    
+    public double getCalories() {
+        return calories;
+    }
+    
+    public double getProtein() {
+        return protein;
+    }
+    public double getFat() {
+        return fat;
+    }
+    
     @Override
     public String toString() {
         String str = "\n*******************************************************\n";

@@ -53,6 +53,7 @@ import nutrition.app.Parsers.FoodParser;
 import nutrition.app.Parsers.ReportParser;
 import nutrition.app.Parsers.USDAFood;
 import nutrition.app.Parsers.USDANutrient;
+import nutrition.app.Parsers.UserParser;
 import org.json.JSONException;
 
 
@@ -110,6 +111,7 @@ public class Main {
         Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
         AdvancedSearchPanel searchPanel = new AdvancedSearchPanel();
         NutrientResultPanel nutrientResults;
+        UserParser userParser = new UserParser();
         
         public MainFrame() {
             options = new HashMap<>();
@@ -225,6 +227,12 @@ public class Main {
                 if(goal != null && activityLevel != null && gender != null)
                 {
                     user = new User(firstName,lastName,heightCm,weight,dateOfBirth,gender,activityLevel,goal);
+                    if(!userParser.matchesUser(user))
+                    {
+                        System.out.println("Writing User details to text file");
+                        userParser = new UserParser(user);
+                    }
+                        
                     textArea.setText("");
                     textArea.append(user.toString());
                     System.out.println(user.toString());

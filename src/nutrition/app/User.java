@@ -237,6 +237,43 @@ public class User {
         return null;
     }
     
+    private String getGenderString() {
+         switch(gender)
+        {
+            case MALE:
+                return "Male";
+            case FEMALE:
+                return "Female";
+        }
+         return "";
+    }
+    
+    private String getFitnessGoalString() {
+         switch(fitnessGoal)
+        {
+            case FAT_LOSS:
+                return "Fat Loss";
+            case MAINTAIN:
+                return "Maintain";
+            case GAIN_MASS:
+                return "Gain Mass";
+        }
+         return "";
+    }
+    
+    private String getActivityLevelString() {
+        switch(activityLevel) {
+            case SEDENTARY:
+                return "sedentary";
+            case LIGHT:
+                return "light";
+            case MODERATE:
+                return "moderate";
+            case HEAVY:
+                return "heavy";
+        }
+        return "";
+    }
     @Override
     public String toString() {
         String str = String.format("%s %6s %6s","Name:", firstName, lastName);
@@ -267,6 +304,12 @@ public class User {
             str += "\n" + macros.toString();
         }
         return str;
+    }
+
+    //firstName,lastName,height,weight,dateofbirth,age,goal,activity,gender
+    public String getOutputString() {
+        
+        return firstName +","+lastName+","+height+","+weight+","+dob+","+getFitnessGoalString()+","+getActivityLevelString()+","+getGenderString();
     }
     
     

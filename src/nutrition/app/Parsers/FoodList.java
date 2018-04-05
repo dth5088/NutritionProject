@@ -16,6 +16,7 @@ import javax.swing.DefaultListModel;
 public class FoodList {
     String foodName;
     ArrayList<USDAFood> list;
+    
     public FoodList(String foodName) {
         this.foodName = foodName;
         list = new ArrayList<>();

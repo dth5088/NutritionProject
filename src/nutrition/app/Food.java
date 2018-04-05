@@ -16,17 +16,20 @@ public class Food {
     int portionSize;
     Macronutrients macro;
     UnitOfMeasurement unitOfMeasurement;
+    String uom;
     
     public Food(String name, int portionSize, double calories, double carbs, double protein, double fat)
     {
         this.name = name;
         this.portionSize = portionSize;
+        uom = "";
         macro = new Macronutrients(calories, carbs, protein, fat);
     }
     
     public Food(String name, int portionSize, String uom, double calories, double carbs, double protein, double fat) {
         this.name = name;
         this.portionSize = portionSize;
+        this.uom = uom;
         macro = new Macronutrients(calories, carbs, protein, fat);
         setUnitOfMeasurement(uom);
     }
@@ -57,6 +60,19 @@ public class Food {
                 this.unitOfMeasurement = UnitOfMeasurement.TABLESPOON;
                 break;
         }
+    }
+    
+    public HashMap<String,Object> getMapped() {
+        HashMap<String,Object> returnMap = new HashMap<>();
+        returnMap.putIfAbsent("name", name);
+        returnMap.putIfAbsent("unit", uom);
+        returnMap.putIfAbsent("portionSize", portionSize);
+        returnMap.putIfAbsent("calories", macro.getCalories());
+        returnMap.putIfAbsent("carbs", macro.getCarbohydrates());
+        returnMap.putIfAbsent("protein", macro.getProtein());
+        returnMap.putIfAbsent("fat", macro.getFat());
+        
+        return returnMap;
     }
     
     public String toString() {
