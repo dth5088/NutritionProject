@@ -28,43 +28,6 @@ public class User {
     private double REE = 0;
     private double TDEE = 0;
     
-//    /**
-//     * Constructs a new User.
-//     * 
-//     * @param firstName
-//     * @param lastName
-//     * @param height
-//     * @param weight
-//     * @param dob 
-//     */
-//    public User(String firstName, String lastName, double height, double weight, LocalDate dob) {
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        this.height = height;
-//        this.weight = weight;
-//        this.dob = dob;
-//        setAge();
-//    }
-//    
-//    /**
-//     * Constructs a new User.
-//     * 
-//     * @param firstName
-//     * @param lastName
-//     * @param height
-//     * @param weight
-//     * @param dob
-//     * @param gender 
-//     */
-//    public User(String firstName, String lastName, double height, double weight, LocalDate dob, Gender gender) {
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        this.height = height;
-//        this.weight = weight;
-//        this.dob = dob;
-//        this.gender = gender;
-//        setAge();
-//    }
 
     /**
      * Constructs a new User.
@@ -124,6 +87,10 @@ public class User {
      */
     public void addFood(Food food) {
         preferredFoods.add(food);
+    }
+    
+    public void parsePreferredFoods() {
+        FoodListParser parser = new FoodListParser(this);
     }
     
     public String getFood() {

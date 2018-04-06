@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -27,8 +28,8 @@ public class UserDetailPanel extends JPanel{
     JLabel heightLabel = new JLabel("Height:"), weightLabel = new JLabel("Weight:")
             ,bdayLabel = new JLabel("Date of Birth:"), ageLabel = new JLabel("Age:"),genderLabel = new JLabel("Gender:")
             ,activityLabel = new JLabel("Activity Level:"),goalLabel = new JLabel("Goal:")
-            ,recCalsLabel = new JLabel("Daily Calories:"), recCarbsLabel = new JLabel("Daily Carbs(g):")
-            ,recProteinLabel = new JLabel("Daily Protein(g):"), recFatLabel = new JLabel("Daily Fat(g):");
+            ,recCalsLabel = new JLabel("Calories:"), recCarbsLabel = new JLabel("Carbs(g):")
+            ,recProteinLabel = new JLabel("Protein(g):"), recFatLabel = new JLabel("Fat(g):");
     JTextField heightField = new JTextField(), weightField = new JTextField()
             ,bdayField = new JTextField(), ageField = new JTextField()
             , genderField = new JTextField(),activityField = new JTextField()
@@ -55,7 +56,7 @@ public class UserDetailPanel extends JPanel{
         heightField.setEditable(false);
         heightField.setFont(font);
         heightField.setText(user.getHeightString());
-        heightField.setHorizontalAlignment(JTextField.CENTER);
+        heightField.setHorizontalAlignment(JTextField.LEFT);
         
         
         weightLabel.setFont(font);
@@ -63,42 +64,42 @@ public class UserDetailPanel extends JPanel{
         weightField.setEditable(false);
         weightField.setFont(font);
         weightField.setText(user.getWeightString());
-        weightField.setHorizontalAlignment(JTextField.CENTER);
+        weightField.setHorizontalAlignment(JTextField.LEFT);
         
         bdayLabel.setFont(font);
         bdayLabel.setHorizontalAlignment(labelAlignment);
         bdayField.setEditable(false);
         bdayField.setFont(font);
         bdayField.setText(user.getbdayString());
-        bdayField.setHorizontalAlignment(JTextField.CENTER);
+        bdayField.setHorizontalAlignment(JTextField.LEFT);
         
         ageLabel.setFont(font);
         ageLabel.setHorizontalAlignment(labelAlignment);
         ageField.setEditable(false);
         ageField.setFont(font);
         ageField.setText(user.getAgeString());
-        ageField.setHorizontalAlignment(JTextField.CENTER);
+        ageField.setHorizontalAlignment(JTextField.LEFT);
         
         genderLabel.setFont(font);
         genderLabel.setHorizontalAlignment(labelAlignment);
         genderField.setEditable(false);
         genderField.setFont(font);
         genderField.setText(user.getGenderString());
-        genderField.setHorizontalAlignment(JTextField.CENTER);
+        genderField.setHorizontalAlignment(JTextField.LEFT);
         
         activityLabel.setFont(font);
         activityLabel.setHorizontalAlignment(labelAlignment);
         activityField.setEditable(false);
         activityField.setFont(font);
         activityField.setText(user.getActivityLevelString());
-        activityField.setHorizontalAlignment(JTextField.CENTER);
+        activityField.setHorizontalAlignment(JTextField.LEFT);
         
         goalLabel.setFont(font);
         goalLabel.setHorizontalAlignment(labelAlignment);
         goalField.setEditable(false);
         goalField.setFont(font);
         goalField.setText(user.getFitnessGoalString());
-        goalField.setHorizontalAlignment(JTextField.CENTER);
+        goalField.setHorizontalAlignment(JTextField.LEFT);
         
         recCalsLabel.setFont(font);
         recCalsLabel.setHorizontalAlignment(labelAlignment);
@@ -106,7 +107,7 @@ public class UserDetailPanel extends JPanel{
         calsField.setFont(font);
         String cals = String.format("%.2f", macros.getCalories());
         calsField.setText(cals);
-        calsField.setHorizontalAlignment(JTextField.CENTER);
+        calsField.setHorizontalAlignment(JTextField.LEFT);
         
         recCarbsLabel.setFont(font);
         recCarbsLabel.setHorizontalAlignment(labelAlignment);
@@ -114,7 +115,7 @@ public class UserDetailPanel extends JPanel{
         carbsField.setFont(font);
         String carbs = String.format("%.2f", macros.getCarbohydrates());
         carbsField.setText(carbs);
-        carbsField.setHorizontalAlignment(JTextField.CENTER);
+        carbsField.setHorizontalAlignment(JTextField.LEFT);
         
         recProteinLabel.setFont(font);
         recProteinLabel.setHorizontalAlignment(labelAlignment);
@@ -122,7 +123,7 @@ public class UserDetailPanel extends JPanel{
         proteinField.setFont(font);
         String protein = String.format("%.2f", macros.getProtein());
         proteinField.setText(protein);
-        proteinField.setHorizontalAlignment(JTextField.CENTER);
+        proteinField.setHorizontalAlignment(JTextField.LEFT);
         
         recFatLabel.setFont(font);
         recFatLabel.setHorizontalAlignment(labelAlignment);
@@ -130,111 +131,79 @@ public class UserDetailPanel extends JPanel{
         fatField.setFont(font);
         String fat = String.format("%.2f", macros.getFat());
         fatField.setText(fat);
-        fatField.setHorizontalAlignment(JTextField.CENTER);
+        fatField.setHorizontalAlignment(JTextField.LEFT);
             
     }
+    
     
     private void setupLayout() {
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        
-        // create row
-            // add welcome label
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 0.0;
-        gbc.weighty = 1.0;
-        gbc.insets = new Insets(5,0,5,0);
+        // create row
+            // add welcome label
+        gbc.insets = new Insets(5,5,5,5);
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         add(welcomeLabel, gbc);
         // end row
-        
-        gbc.weighty = 0.0;
         gbc.weightx = 1.0;
         gbc.gridwidth = 1;
-        gbc.gridheight = 1;
-        gbc.insets = new Insets(5,5,5,5);
-        
-        //add row
         gbc.gridy = 1;
-            // add bday label
-        gbc.gridx = 2;
-        add(bdayLabel, gbc);
-            // add bday text field
-        gbc.gridx = 3;
-        add(bdayField, gbc);
-            // add age label
-        gbc.gridx = 4;
-        add(ageLabel, gbc);
-            // add age text field
-        gbc.gridx = 5;
-        add(ageField, gbc);
-        // row end
-        
-        // row start
-        gbc.gridy = 2;
-            // add height label
-        gbc.gridx = 2;
-        add(heightLabel, gbc);
-            // add height text field
-        gbc.gridx = 3;
-        add(heightField,gbc);
-            // add weight label
-        gbc.gridx = 4;
-        add(weightLabel, gbc);
-            // add weight textField
-        gbc.gridx = 5;
-        add(weightField, gbc);
-        // end row
-        
-        // row start
-        gbc.gridy = 3;
-            // add gender label
-        gbc.gridx = 1;
-        add(genderLabel, gbc);
-            // add gender field
-        gbc.gridx = 2;
-        add(genderField, gbc);
-            // add activity level label
-        gbc.gridx = 3;
-        add(activityLabel, gbc);
-            // add activity level field
-        gbc.gridx = 4;
-        add(activityField, gbc);
-            // add goal label
-        gbc.gridx = 5;
-        add(goalLabel, gbc);
-            // add goalField
-        gbc.gridx = 6;
-        add(goalField, gbc);
-        // end row
-        
-        // row start
-        gbc.gridy = 4;
-            // add recommended calories label
         gbc.gridx = 0;
-        add(recCalsLabel, gbc);
-            // add recommended calories field
+        add(heightLabel, gbc);
         gbc.gridx = 1;
-        add(calsField, gbc);
-            // add recommended carbs label
-        gbc.gridx = 2;    
-        add(recCarbsLabel, gbc);
-            // add carbs field
+        add(heightField, gbc);
+        gbc.gridx = 2;
+        add(weightLabel, gbc); 
         gbc.gridx = 3;
+        add(weightField, gbc);
+        
+        gbc.gridy = 2;
+        gbc.gridx = 0;
+        add(bdayLabel, gbc);
+        gbc.gridx = 1;
+        add(bdayField, gbc);
+        gbc.gridx = 2;
+        add(ageLabel, gbc);
+        gbc.gridx = 3;
+        add(ageField, gbc);
+        
+        gbc.gridy = 3;
+        gbc.gridx = 0;
+        add(genderLabel, gbc);
+        gbc.gridx = 1;
+        add(genderField, gbc);
+        gbc.gridx = 2;
+        add(goalLabel, gbc);
+        gbc.gridx = 3;
+        add(goalField, gbc);
+        
+        gbc.gridy = 4;
+        gbc.gridx = 0;
+        add(activityLabel, gbc);
+        gbc.gridx = 1;
+        add(activityField, gbc);
+        gbc.gridx = 2;
+        add(recCalsLabel, gbc);
+        gbc.gridx = 3;
+        add(calsField, gbc);
+        
+        gbc.gridy = 5;
+        gbc.gridx = 0;
+        add(recCarbsLabel, gbc);
+        gbc.gridx = 1;
         add(carbsField, gbc);
-            // add protein label
-        gbc.gridx = 4;
+        gbc.gridx = 2;
         add(recProteinLabel, gbc);
-            // add protein field
-        gbc.gridx = 5;
+        gbc.gridx = 3;
         add(proteinField, gbc);
-            // add fat label
-        gbc.gridx = 6;
+        
+        gbc.gridy = 6;
+        gbc.gridx = 0;
         add(recFatLabel, gbc);
-            // add fat field
-        gbc.gridx = 7;
+        gbc.gridx = 1;
         add(fatField, gbc);
-        // row end
     }
     
     

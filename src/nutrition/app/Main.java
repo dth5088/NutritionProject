@@ -11,6 +11,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -377,14 +378,20 @@ public class Main {
             nutrientResults = new NutrientResultPanel();
             JPanel foodPanel = createFoodPanel();
             JPanel textAreaPanel = createTextAreaPanel();
+            JPanel tPanel = new JPanel();
             //nutrientResults.setPreferredSize(new Dimension(400,450));
             //nutrientResults.setMinimumSize(new Dimension(400,450));
            
-            JPanel userPanel;
+            JPanel userPanel = new JPanel(new GridLayout(1,1));
+            
             if(user != null)
-                userPanel = new UserDetailPanel(user);
+            {
+                UserDetailPanel uPanel = new UserDetailPanel(user);
+                userPanel.add(uPanel);
+            }
             else
-                userPanel = createUserPanel();
+                userPanel.add(createUserPanel());
+            userPanel.add(tPanel);
             JPanel tabPanel1 = new JPanel();
             GroupLayout tabPanel1Layout = new GroupLayout(tabPanel1);
             tabPanel1.setLayout(tabPanel1Layout);
