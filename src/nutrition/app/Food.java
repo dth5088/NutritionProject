@@ -5,7 +5,10 @@
  */
 package nutrition.app;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import nutrition.app.Parsers.USDAFood;
+import nutrition.app.Parsers.USDANutrient;
 
 /**
  *
@@ -40,6 +43,7 @@ public class Food {
         this.macro = macro;
         setUnitOfMeasurement(uom);
     }
+    
     
     private void setUnitOfMeasurement(String stringUnitOfMeasurement) {
         switch(stringUnitOfMeasurement)

@@ -50,6 +50,11 @@ public class USDANutrient {
     public ArrayList<Measure> getMeasures() {
         return measures;
     }
+    public Measure getDefaultMeasure() {
+        if(measures.isEmpty())
+            return null;
+        return measures.get(0);
+    }
     public String toString() {
         String str = name + " (" +unit+") \n";
         for(Measure measure : measures)

@@ -5,9 +5,11 @@
  */
 package nutrition.app;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import nutrition.app.Parsers.FoodListParser;
 
 /**
  *
@@ -89,8 +91,14 @@ public class User {
         preferredFoods.add(food);
     }
     
-    public void parsePreferredFoods() {
+    public void parsePreferredFoods() throws IOException {
         FoodListParser parser = new FoodListParser(this);
+        preferredFoods.addAll(parser.getParsedFood());
+    }
+    
+    public ArrayList<Food> getPreferredFoods() throws IOException {
+        FoodListParser parser = new FoodListParser(this);
+        return parser.getParsedFood();
     }
     
     public String getFood() {

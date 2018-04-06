@@ -2,7 +2,9 @@ package nutrition.app;
 
 import UI.FoodSearchResultTableModel;
 import UI.AdvancedSearchPanel;
+import UI.FoodPreferencePanel;
 import UI.NutrientResultPanel;
+import UI.SearchResultPanel;
 import UI.UserDetailPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -38,6 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -114,6 +117,7 @@ public class Main {
         AdvancedSearchPanel searchPanel = new AdvancedSearchPanel();
         NutrientResultPanel nutrientResults;
         UserParser userParser = new UserParser();
+        SearchResultPanel searchResultPanel;
         
         public MainFrame() {
             options = new HashMap<>();
@@ -193,6 +197,7 @@ public class Main {
                 if(goal != null && activityLevel != null && gender != null)
                 {
                     user = new User(firstName,lastName,heightCm,weight,dateOfBirth,gender,activityLevel,goal);
+                    searchResultPanel.setUser(user);
                     if(!userParser.matchesUser(user))
                     {
                         System.out.println("Writing User details to text file");
@@ -208,63 +213,34 @@ public class Main {
             
             executeButton.addActionListener(e -> {
                 nutrientResults.clearNutrients();
-                model.clearSearchResults();
                 String foodToSearch = textField.getText();
                 String jsonString = "";
                 FoodList searchResults = new FoodList(foodToSearch);
                 try {
-                    //String returnString = FoodService.getNutritionFacts(foodToSearch);
-                    //Parser parser = new Parser(returnString);
-                    //jsonString = parser.getMacros();
                     setOptions(foodToSearch);
-                    //String returnString = FoodService.getFoodListMatching(foodToSearch);
                     String returnString = FoodService.fetchUSDA_FoodList(options);
                     FoodParser parser = new FoodParser(foodToSearch, returnString);
                     searchResults = new FoodList(parser.getSearchResults());
                     jsonString = returnString;
-                    tablePane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                                                                            "Search Results for: " + foodToSearch,
-                                                                            TitledBorder.CENTER,
-                                                                            TitledBorder.TOP));
-                    for(USDAFood food : searchResults.getFoodList())
-                    {
-                        model.addRow(food);
-                    }
+                    searchResultPanel.addFoodListToTable(searchResults);
                     
                 } catch (IOException | JSONException ex) {
                     jsonString = ex.getMessage();
                 }
-            });
-            
-            table.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    int row = table.getSelectedRow();
-                    nutrientResults.clearNutrients();
-                    USDAFood food = model.getRow(row);
-                    textField.setText(food.getFoodName());
-                    textField.setCaretPosition(0);
-                    setOptionsForReport(food.getNDBNO(), "b");
-                    try {
-                        String reportString = FoodService.getNutrientsFromNDBno(options);
-                        ReportParser foodParser = new ReportParser(reportString);
-                        for(USDANutrient nutrient : foodParser.getNutrients())
-                        {
-                            nutrientResults.addNutrientToDisplay(nutrient);
-                        }
-                        
-                        
-                    } catch(IOException | JSONException ignore) {
-                        
-                    }
-                    
-                    
-                }
-            });
-            
-            
+            }); 
         }
         
+        public void setNutrientsForSelectedFood(USDAFood food) {
+            setOptionsForReport(food.getNDBNO(), "b");
+            try {
+                String reportString = FoodService.getNutrientsFromNDBno(options);
+                ReportParser foodParser = new ReportParser(reportString);
+                for(USDANutrient nutrient : foodParser.getNutrients())
+                    nutrientResults.addNutrientToDisplay(nutrient);
+            } catch(IOException | JSONException ignore) {
+                
+            }
+        }
         private Gender getGender(String genderString) {
             switch(genderString) {
                 case "Male":
@@ -376,22 +352,28 @@ public class Main {
         
         private void setLayout(Container contentPane) {
             nutrientResults = new NutrientResultPanel();
+            searchResultPanel = new SearchResultPanel(nutrientResults);
             JPanel foodPanel = createFoodPanel();
             JPanel textAreaPanel = createTextAreaPanel();
             JPanel tPanel = new JPanel();
             //nutrientResults.setPreferredSize(new Dimension(400,450));
             //nutrientResults.setMinimumSize(new Dimension(400,450));
            
-            JPanel userPanel = new JPanel(new GridLayout(1,1));
+            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+            
             
             if(user != null)
             {
                 UserDetailPanel uPanel = new UserDetailPanel(user);
-                userPanel.add(uPanel);
+                FoodPreferencePanel prefPanel = new FoodPreferencePanel(user);
+                splitPane.setLeftComponent(uPanel);
+                splitPane.setRightComponent(prefPanel);
             }
             else
-                userPanel.add(createUserPanel());
-            userPanel.add(tPanel);
+            {
+                splitPane.setLeftComponent(createUserPanel());
+                splitPane.setRightComponent(tPanel);
+            }
             JPanel tabPanel1 = new JPanel();
             GroupLayout tabPanel1Layout = new GroupLayout(tabPanel1);
             tabPanel1.setLayout(tabPanel1Layout);
@@ -415,7 +397,7 @@ public class Main {
             
             mainTabbedPane.addTab("Nutrition Tool", tabPanel1);
             
-            mainTabbedPane.addTab("User Details", userPanel);
+            mainTabbedPane.addTab("User Details", splitPane);
             
             
             
@@ -444,41 +426,64 @@ public class Main {
             };
         }
         private JPanel createFoodPanel() {
-            JPanel foodPanel = new JPanel();
-            Dimension d = new Dimension(375,50);
-            searchPanel.setPreferredSize(d);
-            foodPanel.setPreferredSize(panelSize);
-            foodPanel.setMinimumSize(panelSize);
-            foodPanel.setMaximumSize(panelSize);
+            JPanel foodPanel = new JPanel(new GridBagLayout());
+            //Dimension d = new Dimension(375,50);
+            //searchPanel.setPreferredSize(d);
+//            foodPanel.setPreferredSize(panelSize);
+//            foodPanel.setMinimumSize(panelSize);
+//            foodPanel.setMaximumSize(panelSize);
             textField.setToolTipText("Enter food to search!");
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.weighty = 0;
+            gbc.insets = new Insets(5,5,5,5);
+            gbc.weightx = 0.0;
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            foodPanel.add(searchPanel, gbc);
             
-            tablePane = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            gbc.weightx = 1.0;
+            gbc.gridwidth = 1;
+            gbc.gridy = 1;
+            gbc.gridx = 0;
+            foodPanel.add(textField, gbc);
+            gbc.gridx = 1;
+            foodPanel.add(executeButton, gbc);
             
-            GroupLayout layout = new GroupLayout(foodPanel);
-            foodPanel.setLayout(layout);
-            layout.setAutoCreateGaps(true);
-            layout.setAutoCreateContainerGaps(true);
+            gbc.gridy = 2;
+            //gbc.weightx = 0.0;
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.weighty = 1;
+            gbc.gridx = 0;
+            foodPanel.add(searchResultPanel, gbc);
+            //tablePane = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             
-            layout.setHorizontalGroup(
-                layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                            .addComponent(searchPanel)
-                            .addGroup(layout.createSequentialGroup()
-                                    .addComponent(textField)
-                                    .addComponent(executeButton)
-                            )
-                    //.addComponent(searchPanel)
-                    .addComponent(tablePane)));
-                    
-                    
+//            GroupLayout layout = new GroupLayout(foodPanel);
+//            foodPanel.setLayout(layout);
+//            layout.setAutoCreateGaps(true);
+//            layout.setAutoCreateContainerGaps(true);
+//            
+//            layout.setHorizontalGroup(
+//                layout.createSequentialGroup()
+//                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+//                            .addComponent(searchPanel)
+//                            .addGroup(layout.createSequentialGroup()
+//                                    .addComponent(textField)
+//                                    .addComponent(executeButton)
+//                            )
+//                    //.addComponent(searchPanel)
+//                    .addComponent(tablePane)));
+//                    
+//                    
+//            
+//            layout.setVerticalGroup(layout.createSequentialGroup()
+//                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+//                    .addComponent(searchPanel))
+//                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+//                    .addComponent(textField)
+//                    .addComponent(executeButton))
+//                .addComponent(tablePane));
+
             
-            layout.setVerticalGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchPanel))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(textField)
-                    .addComponent(executeButton))
-                .addComponent(tablePane));
             return foodPanel;
         }
         

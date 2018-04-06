@@ -6,12 +6,14 @@
 package UI;
 
 import java.awt.GridLayout;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import nutrition.app.Food;
+import nutrition.app.User;
 
 /**
  *
@@ -20,15 +22,20 @@ import nutrition.app.Food;
 public class FoodPreferencePanel extends JPanel{
     
     
-    public FoodPreferencePanel(ArrayList<Food> foodList) {
-        int numRows = foodList.size() + 1;
-        JPanel panel = new JPanel(new GridLayout(numRows, 1));
-        panel.add(getLabelPanel());
-        for(Food food : foodList) {
-            panel.add(addFoodToPanel(food));
+    public FoodPreferencePanel(User user) {
+        try {
+            ArrayList<Food> foodList = user.getPreferredFoods();
+            int numRows = foodList.size() + 1;
+            JPanel panel = new JPanel(new GridLayout(numRows, 1));
+            panel.add(getLabelPanel());
+            for(Food food : foodList) {
+                panel.add(addFoodToPanel(food));
+            }
+            JScrollPane scrollPane = new JScrollPane(panel,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            add(scrollPane);
+        } catch(IOException e) {
+            e.printStackTrace();
         }
-        JScrollPane scrollPane = new JScrollPane(panel,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        add(scrollPane);
     }
     private JPanel getLabelPanel() {
         JPanel panel = new JPanel(new GridLayout(1,7));
