@@ -5,6 +5,8 @@
  */
 package nutrition.app.Parsers;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,15 +21,21 @@ import org.json.JSONObject;
 public class USDAFood {
     String name;            // food name
     String ndbno;           // foods NDB Number
-    String group;           // food group
-    String ds;              // BL = Branded Food Products or SR = Standard Release
+    String group = "";           // food group
+    String ds = "";              // BL = Branded Food Products or SR = Standard Release
     String upc;
+    String sd = "";              // short description
+    String sn = "";              // scientific name
+    String cn = "";              // commerical name
+    String manu = "";            // manufacturer
     HashMap<String,String> map;
+    ArrayList<USDANutrient> nutrients = new ArrayList<>();
     
     public USDAFood(String[] arr) throws JSONException {
         map = new HashMap<>();
         for (String index : arr)
         {
+            System.out.println(index);
             String[] splitString = index.split(":");
             String key = splitString[0];
             String value = splitString[1];
@@ -46,34 +54,70 @@ public class USDAFood {
                 case "ds":
                     ds = value;
                     break;
+                case "sd":
+                    sd = value;
+                    break;
+                case "sn":
+                    sn = value;
+                    break;
+                case "cn":
+                    cn = value;
+                    break;
+                case "manu":
+                    manu = value;
+                    break;
+                case "upc":
+                    upc = value;
+                    break;
             }
         }
     }
     
-    public USDAFood(JSONObject foodObject) throws JSONException {
-        map = new HashMap<>();
-        Iterator it = foodObject.keys();
-        while(it.hasNext())
-        {
-            
-            Object key = it.next();
-            Object value = foodObject.get(key.toString());
-            map.put(key.toString(), value.toString());
-            switch(key.toString()) {
-                case "ndbno":
-                    ndbno = value.toString();
-                    break;
-                case "name":
-                    name = value.toString();
-                    setUPC(value.toString());
-                    break;
-                case "group":
-                    group = value.toString();
-                    break;
-                case "ds":
-                    ds = value.toString();
-                    break;
+    public USDAFood(JSONObject foodObject) {
+        
+        try {
+            map = new HashMap<>();
+            ndbno = foodObject.get("ndbno").toString();
+            map.put("ndbno",ndbno);
+            name = foodObject.get("name").toString();
+            map.put("name",name);
+            setUPC(name);
+            map.put("upc",upc);
+            if(foodObject.has("group"))
+            {
+                group += foodObject.get("group").toString();
+                map.put("group", group);
             }
+            if(foodObject.has("sn"))
+            {
+                System.out.println("Scientific Name: " + " " +foodObject.get("sn"));
+                sn += foodObject.get("sn").toString();
+                map.put("sn",sn);
+            }
+            if (foodObject.has("cn")){
+                System.out.println("Commercial Name: " + " " +foodObject.get("cn"));
+                cn += foodObject.get("cn").toString();
+                map.put("cn",cn);
+            }
+            if(foodObject.has("manu")){
+                System.out.println("Manufacturer: " + " " +foodObject.get("manu"));
+                manu += foodObject.get("manu").toString();
+                map.put("manu",manu);
+            }
+            if(foodObject.has("sd"))
+            {
+                System.out.println("Short Discription: " + " " + foodObject.get("sd"));
+                sd += foodObject.get("sd").toString();
+                map.put("sd",sd);
+            }
+            if(foodObject.has("nutrients")) {
+                JSONArray nutrientArray = foodObject.getJSONArray("nutrients");
+                for(int i =0; i < nutrientArray.length();i++) {
+                    nutrients.add(new USDANutrient(nutrientArray.getJSONObject(i)));
+                }
+            }
+        } catch(JSONException e) {
+            e.printStackTrace();
         }
     }
     public HashMap.Entry<String,String> getEntry(String key) {
@@ -88,8 +132,32 @@ public class USDAFood {
         return name;
     }
     
+    public ArrayList<USDANutrient> getNutrients() {
+        return nutrients;
+    }
+    
     public String getNDBNO() {
         return ndbno;
+    }
+    
+    public String getManufacturer() {
+        return manu;
+    }
+    
+    public String getCommercialName() {
+        return cn;
+    }
+    
+    public String getShortDiscription() {
+        return sd;
+    }
+    
+    public String getGroup() {
+        return group;
+    }
+    
+    public String getScientificName() {
+        return sn;
     }
     
     public String getUPC() {
@@ -97,7 +165,8 @@ public class USDAFood {
     }
     
     public String toString() {
-        return String.format("%s %s %s %s", "name:",name,"ndbno:",ndbno);
+        String str = String.format("%s %s %s %s", "name:",name,"ndbno:",ndbno);
+        return str;
     }
 
     private void setUPC(String value) {
@@ -107,7 +176,6 @@ public class USDAFood {
             {
                 String[] upcArray = str.split(":");
                 upc = upcArray[1];
-                System.out.println(upc);
             }    
         }
     }

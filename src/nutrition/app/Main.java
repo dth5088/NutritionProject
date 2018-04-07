@@ -52,6 +52,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import nutrition.app.Parsers.FoodList;
 import nutrition.app.Parsers.FoodParser;
@@ -218,7 +219,7 @@ public class Main {
                 FoodList searchResults = new FoodList(foodToSearch);
                 try {
                     setOptions(foodToSearch);
-                    String returnString = FoodService.fetchUSDA_FoodList(options);
+                    String returnString = FoodService.fetchUSDA_FoodList(options);      // returned list of food as string
                     FoodParser parser = new FoodParser(foodToSearch, returnString);
                     searchResults = new FoodList(parser.getSearchResults());
                     jsonString = returnString;
@@ -366,6 +367,8 @@ public class Main {
             {
                 UserDetailPanel uPanel = new UserDetailPanel(user);
                 FoodPreferencePanel prefPanel = new FoodPreferencePanel(user);
+                searchResultPanel.setUser(user);
+                searchResultPanel.passFoodPreferencePanel(prefPanel);
                 splitPane.setLeftComponent(uPanel);
                 splitPane.setRightComponent(prefPanel);
             }
@@ -424,6 +427,9 @@ public class Main {
                     return c;
                 }
             };
+            
+            DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer();
+            renderer.setHorizontalAlignment(JLabel.CENTER);
         }
         private JPanel createFoodPanel() {
             JPanel foodPanel = new JPanel(new GridBagLayout());

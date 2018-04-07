@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
@@ -27,6 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import nutrition.app.Constants;
 import nutrition.app.Food;
@@ -52,6 +54,10 @@ public class SearchResultPanel extends JPanel{
     NutrientResultPanel nutrientResults;
     HashMap<String,String> options;
     User user = null;
+    FoodPreferencePanel fpp;
+    int style = Font.BOLD | Font.ITALIC;
+    Font font = new Font ("Arial", style , 10);
+    
     public SearchResultPanel(NutrientResultPanel nutrientResults) {
         this.nutrientResults = nutrientResults;
         this.nutrientResults.clearNutrients();
@@ -79,7 +85,9 @@ public class SearchResultPanel extends JPanel{
         setupListeners();
         
     }
-    
+    public void passFoodPreferencePanel(FoodPreferencePanel fpp) {
+        this.fpp = fpp;
+    }
     public void setUser(User user) {
         this.user = user;
     }
@@ -93,13 +101,11 @@ public class SearchResultPanel extends JPanel{
         table.addMouseListener(new PopupListener());
         
         JMenuItem item = new JMenuItem("Add to preferences!");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if(user != null && regFood != null)
-                {
-                    user.addFood(regFood);
-                        
-                }
+        item.addActionListener((ActionEvent e) -> {
+            if(user != null)
+            {
+                user.addFood(regFood);
+                fpp.addFood(regFood);
             }
         });
         popup.add(item);
@@ -108,6 +114,10 @@ public class SearchResultPanel extends JPanel{
 
     private void setupLayout() {
         this.setLayout(new BorderLayout());
+        DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer();
+        renderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setFont(font);
+        table.getTableHeader().setFont(font);
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
         
@@ -130,33 +140,16 @@ public class SearchResultPanel extends JPanel{
             if(model.getRow(row) == null)
                 return;
             selectedFood = model.getRow(row);
-            setOptionsForReport(selectedFood.getNDBNO(), "b");
+            setOptionsForReport(selectedFood.getNDBNO(), "f");
             try {
                 String reportString = FoodService.getNutrientsFromNDBno(options);
                 ReportParser foodParser = new ReportParser(reportString);
-                double carbs=0.2f, fat=0.2f, calories=0.2f, protein = 0.2f;
-                for(USDANutrient nutrient : foodParser.getNutrients())
-                {
-                    switch(nutrient.getName().toLowerCase())
-                    {
-                        case "fat":
-                            fat = Double.parseDouble(nutrient.getDefaultMeasure().getValue());
-                            break;
-                        case "carb":
-                            carbs = Double.parseDouble(nutrient.getDefaultMeasure().getValue());
-                            break;
-                        case "protein":
-                            protein = Double.parseDouble(nutrient.getDefaultMeasure().getValue());
-                            break;
-                        case "calories":
-                            calories = Double.parseDouble(nutrient.getDefaultMeasure().getValue());
-                            break;
-                    }
+                USDAFood tempFood = foodParser.getFood();
+                for(USDANutrient nutrient : tempFood.getNutrients())
                     nutrientResults.addNutrientToDisplay(nutrient);
-                }
-                regFood = new Food(selectedFood.getFoodName(), 1, calories, carbs, protein, fat);
+                regFood = new Food(tempFood);
             } catch(IOException | JSONException ignore ) {
-                
+                ignore.printStackTrace();
             }
             if(e.isPopupTrigger()) {
                 popup.show(e.getComponent(),

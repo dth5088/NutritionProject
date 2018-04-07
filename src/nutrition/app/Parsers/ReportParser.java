@@ -16,18 +16,21 @@ import org.json.JSONObject;
  */
 public class ReportParser {
     public ArrayList<USDANutrient> nutrientsList;
+    USDAFood food;
     
     public ReportParser(String jsonResponseString) throws JSONException{
         nutrientsList = new ArrayList<>();
         JSONObject responseObject = new JSONObject(jsonResponseString);
         JSONObject report = (JSONObject) responseObject.get("report");
-        JSONObject food = (JSONObject) report.get("food");
-        JSONArray nutrients = (JSONArray) food.get("nutrients");
-        for(int i = 0; i < nutrients.length();i++) {
-           nutrientsList.add(new USDANutrient((JSONObject) nutrients.get(i)));
-        }
+        JSONObject foodObject = (JSONObject) report.get("food");
+        //System.out.println(foodObject.toString());
+        USDAFood tempFood = new USDAFood(foodObject);
+        this.food = tempFood;
+        this.nutrientsList = tempFood.getNutrients();
     }
-    
+    public USDAFood getFood() {
+        return food;
+    }
     public ArrayList<USDANutrient> getNutrients() {
         return nutrientsList;
     }

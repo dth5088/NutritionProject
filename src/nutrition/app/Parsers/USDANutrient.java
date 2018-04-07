@@ -37,6 +37,7 @@ public class USDANutrient {
     public String getName() {
         return name;
     }
+    
     public String getUnit() {
         return unit;
     }

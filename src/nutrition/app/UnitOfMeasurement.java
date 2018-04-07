@@ -10,5 +10,5 @@ package nutrition.app;
  * @author dth5088
  */
 public enum UnitOfMeasurement {
-    OUNCE,GRAM,CUP,TEASPOON,TABLESPOON
+    OUNCE,GRAM,CUP,TEASPOON,TABLESPOON,BAR
 }

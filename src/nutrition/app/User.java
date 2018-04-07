@@ -29,6 +29,7 @@ public class User {
     private Macronutrients macros;
     private double REE = 0;
     private double TDEE = 0;
+    FoodListParser parser;
     
 
     /**
@@ -54,6 +55,11 @@ public class User {
         this.fitnessGoal = fitnessGoal;
         setAge();
         calculateMacros();
+        try {
+            parser = new FoodListParser(this);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -88,16 +94,20 @@ public class User {
      * @param food 
      */
     public void addFood(Food food) {
+        System.out.println("Adding " + food);
         preferredFoods.add(food);
+        try {
+            parser.addFoodToTextFile(food);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public void parsePreferredFoods() throws IOException {
-        FoodListParser parser = new FoodListParser(this);
         preferredFoods.addAll(parser.getParsedFood());
     }
     
     public ArrayList<Food> getPreferredFoods() throws IOException {
-        FoodListParser parser = new FoodListParser(this);
         return parser.getParsedFood();
     }
     

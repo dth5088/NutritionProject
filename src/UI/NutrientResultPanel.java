@@ -8,6 +8,7 @@ package UI;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -19,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import nutrition.app.Constants;
 import nutrition.app.Parsers.USDANutrient;
@@ -31,6 +33,8 @@ public class NutrientResultPanel extends JPanel{
     JScrollPane scrollPane;
     NutrientResultTableModel model;
     JTable table;
+    int style = Font.BOLD | Font.ITALIC;
+    Font font = new Font ("Arial", style , 10);
     
     public NutrientResultPanel() {
         super.setLayout(new GridBagLayout());
@@ -56,6 +60,10 @@ public class NutrientResultPanel extends JPanel{
                     return c;
                 }
             };
+        table.setFont(font);
+        table.getTableHeader().setFont(font);
+        DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer();
+        renderer.setHorizontalAlignment(JLabel.CENTER);
         table.getColumnModel().getColumn(0).setPreferredWidth(150);
         table.getColumnModel().getColumn(1).setPreferredWidth(50);
         table.getColumnModel().getColumn(2).setPreferredWidth(100);

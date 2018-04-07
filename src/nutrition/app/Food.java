@@ -20,6 +20,7 @@ public class Food {
     Macronutrients macro;
     UnitOfMeasurement unitOfMeasurement;
     String uom;
+    String manufacturer = "";
     
     public Food(String name, int portionSize, double calories, double carbs, double protein, double fat)
     {
@@ -44,9 +45,30 @@ public class Food {
         setUnitOfMeasurement(uom);
     }
     
+    public Food(USDAFood food) {
+        this.name = food.getFoodName();
+        this.portionSize = 1;
+        double fat = 0.0, carbs = 0.0, protein = 0.0, calories = 0.0;
+        for(USDANutrient nutrient : food.getNutrients())
+        {
+            String nutrientName = nutrient.getName();
+            if(nutrient.getName().contains("fat"))
+                fat = Double.parseDouble(nutrient.getDefaultMeasure().getValue());
+            else if(nutrient.getName().contains("Carbohydrate"))
+                carbs = Double.parseDouble(nutrient.getDefaultMeasure().getValue());
+            else if(nutrient.getName().contains("Protein"))
+                protein = Double.parseDouble(nutrient.getDefaultMeasure().getValue());
+            else if(nutrient.getName().contains("Energy"))
+                calories = Double.parseDouble(nutrient.getDefaultMeasure().getValue());
+            this.macro = new Macronutrients(calories, carbs, protein, fat);
+            this.uom = nutrient.getDefaultMeasure().getLabel();
+        }
+        this.manufacturer += food.getManufacturer();
+    }
+    
     
     private void setUnitOfMeasurement(String stringUnitOfMeasurement) {
-        switch(stringUnitOfMeasurement)
+        switch(stringUnitOfMeasurement.toLowerCase())
         {
             case "oz":
                 unitOfMeasurement = UnitOfMeasurement.OUNCE;
@@ -63,6 +85,14 @@ public class Food {
             case "tbsp":
                 this.unitOfMeasurement = UnitOfMeasurement.TABLESPOON;
                 break;
+            case "bar":
+                this.unitOfMeasurement = UnitOfMeasurement.BAR;
+                break;
+            case "mg":
+                
+            default:
+                System.out.println(stringUnitOfMeasurement);
+                break;
         }
     }
     
@@ -75,6 +105,7 @@ public class Food {
         returnMap.putIfAbsent("carbs", macro.getCarbohydrates());
         returnMap.putIfAbsent("protein", macro.getProtein());
         returnMap.putIfAbsent("fat", macro.getFat());
+        returnMap.putIfAbsent("manufacturer", manufacturer);
         
         return returnMap;
     }

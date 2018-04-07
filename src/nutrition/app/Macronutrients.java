@@ -5,6 +5,8 @@
  */
 package nutrition.app;
 
+import java.text.DecimalFormat;
+
 /**
  *
  * @author dth5088
@@ -17,7 +19,6 @@ public class Macronutrients {
     private double fat;                 // 1 gram = 9 calories
     private double fatPercent = 0.25;
     private double calories;            // calories = carbs + proteins + fat
-    
     
     
     public Macronutrients(double calories, double carbohydrate, double protein, double fat) {

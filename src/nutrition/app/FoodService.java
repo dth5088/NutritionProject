@@ -71,7 +71,6 @@ public class FoodService {
                }
            }
             stringURL += String.join("&",tempURL,op2,op3,op4,op5,op6);
-            System.out.println(stringURL);
             url = new URL(stringURL);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
