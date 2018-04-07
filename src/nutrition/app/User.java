@@ -96,11 +96,7 @@ public class User {
     public void addFood(Food food) {
         System.out.println("Adding " + food);
         preferredFoods.add(food);
-        try {
-            parser.addFoodToTextFile(food);
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+        parser.addFoodToTextFile(food);
     }
     
     public void parsePreferredFoods() throws IOException {
