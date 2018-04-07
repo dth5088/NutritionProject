@@ -43,6 +43,7 @@ public class Food {
         this.name = name;
         this.portionSize = portionSize;
         this.uom = uom;
+        this.manufacturer = manufacturer;
         macro = new Macronutrients(calories, carbs, protein, fat);
         setUnitOfMeasurement(uom);
     }
@@ -51,6 +52,7 @@ public class Food {
         this.name = name;
         this.portionSize = portionSize;
         this.macro = macro;
+        this.manufacturer = manufacturer;
         setUnitOfMeasurement(uom);
     }
     

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
-import nutrition.app.Parsers.FoodListParser;
+import nutrition.app.Parsers.FoodTextFileParser;
 
 /**
  *
@@ -29,7 +29,7 @@ public class User {
     private Macronutrients macros;
     private double REE = 0;
     private double TDEE = 0;
-    FoodListParser parser;
+    FoodTextFileParser parser;
     
 
     /**
@@ -56,7 +56,7 @@ public class User {
         setAge();
         calculateMacros();
         try {
-            parser = new FoodListParser(this);
+            parser = new FoodTextFileParser(this);
         } catch(IOException e) {
             e.printStackTrace();
         }
