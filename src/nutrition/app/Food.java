@@ -39,7 +39,7 @@ public class Food {
         this.manufacturer = manufacturer;
     }
     
-    public Food(String name, int portionSize, String uom, double calories, double carbs, double protein, double fat) {
+    public Food(String name, String manufacturer, int portionSize, String uom, double calories, double carbs, double protein, double fat) {
         this.name = name;
         this.portionSize = portionSize;
         this.uom = uom;
@@ -47,7 +47,7 @@ public class Food {
         setUnitOfMeasurement(uom);
     }
     
-    public Food(String name, int portionSize, String uom, Macronutrients macro) {
+    public Food(String name, String manufacturer, int portionSize, String uom, Macronutrients macro) {
         this.name = name;
         this.portionSize = portionSize;
         this.macro = macro;
