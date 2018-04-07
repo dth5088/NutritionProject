@@ -30,6 +30,15 @@ public class Food {
         macro = new Macronutrients(calories, carbs, protein, fat);
     }
     
+    public Food(String name, String manufacturer, int portionSize, double calories, double carbs, double protein, double fat)
+    {
+        this.name = name;
+        this.portionSize = portionSize;
+        uom = "";
+        macro = new Macronutrients(calories, carbs, protein, fat);
+        this.manufacturer = manufacturer;
+    }
+    
     public Food(String name, int portionSize, String uom, double calories, double carbs, double protein, double fat) {
         this.name = name;
         this.portionSize = portionSize;

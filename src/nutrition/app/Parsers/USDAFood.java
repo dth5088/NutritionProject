@@ -45,8 +45,7 @@ public class USDAFood {
                     ndbno = value;
                     break;
                 case "name":
-                    name = value;
-                    setUPC(value);
+                    parseName(value);
                     break;
                 case "group":
                     group = value;
@@ -63,7 +62,7 @@ public class USDAFood {
                 case "cn":
                     cn = value;
                     break;
-                case "manu":
+                case "manufacturer":
                     manu = value;
                     break;
                 case "upc":
@@ -72,6 +71,7 @@ public class USDAFood {
             }
         }
     }
+   
     
     public USDAFood(JSONObject foodObject) {
         
@@ -79,9 +79,9 @@ public class USDAFood {
             map = new HashMap<>();
             ndbno = foodObject.get("ndbno").toString();
             map.put("ndbno",ndbno);
-            name = foodObject.get("name").toString();
+            String str = foodObject.get("name").toString();
+            parseName(str);
             map.put("name",name);
-            setUPC(name);
             map.put("upc",upc);
             if(foodObject.has("group"))
             {
@@ -102,7 +102,7 @@ public class USDAFood {
             if(foodObject.has("manu")){
                 System.out.println("Manufacturer: " + " " +foodObject.get("manu"));
                 manu += foodObject.get("manu").toString();
-                map.put("manu",manu);
+                map.put("manufacturer",manu);
             }
             if(foodObject.has("sd"))
             {
@@ -120,6 +120,7 @@ public class USDAFood {
             e.printStackTrace();
         }
     }
+    
     public HashMap.Entry<String,String> getEntry(String key) {
         for(HashMap.Entry<String,String> entry : map.entrySet())
         {
@@ -169,14 +170,22 @@ public class USDAFood {
         return str;
     }
 
-    private void setUPC(String value) {
+    private void parseName(String value) {
         String[] splitName = value.split(",");
-        for(String str : splitName) {
+        String temp = "";
+        for(String str : splitName) 
+        {
+            
             if(str.toLowerCase().contains("upc:"))
             {
                 String[] upcArray = str.split(":");
                 upc = upcArray[1];
-            }    
+            }
+            else {
+                if(str.length() > 4)
+                    temp += str;
+            }
         }
+        name = temp;
     }
 }

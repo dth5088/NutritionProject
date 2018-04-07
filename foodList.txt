@@ -1,1 +1,1 @@
-name:ABBOTT, EAS, MYOPLEX 30 BUILD MUSCLE BAR, CHOCOLATE PEANUT BUTTER, UPC: 791083622813,unit:BAR,portionSize:1,calories:360.0,carbs:33.0,protein:30.0,fat:12.0
+name:ABBOTT MYOPLEX 30 BUILD MUSCLE BAR CHOCOLATE PEANUT BUTTER,Ross Products Division,unit:BAR,portionSize:1,calories:360.0,carbs:33.0,protein:30.0,fat:12.0
